@@ -1,0 +1,88 @@
+"$schema" = 'https://starship.rs/config-schema.json'
+
+add_newline = true
+
+format = """
+$directory\
+$git_branch\
+$git_status\
+$git_metrics\
+$python\
+$nodejs\
+$dotnet\
+$docker_context\
+$status
+$character"""
+
+# ---------------------------
+# Core context
+# ---------------------------
+[directory]
+style = "bold cyan"
+format = '\[[$path]($style)\]'
+truncation_length = 3
+truncate_to_repo = true
+
+# ---------------------------
+# Git
+# ---------------------------
+[git_branch]
+symbol = ""
+style = "bold purple"
+format = '\[[$branch]($style)\]'
+
+[git_status]
+style = "bold yellow"
+# Format bracketed ala preset
+format = '(\[[$all_status$ahead_behind\]]($style))'
+
+[git_metrics]
+added_style = "bold green"
+deleted_style = "bold red"
+format = '([\[+$added\]]($added_style)[\[-$deleted\]]($deleted_style))'
+disabled = false
+
+# ---------------------------
+# Runtimes / env indicators
+# ---------------------------
+[python]
+symbol = ""
+style = "bold blue"
+# Adaptasi dari format bracketed preset Python
+format = '\[[py ${pyenv_prefix}(${version})(\($virtualenv\))]($style)\]'
+
+[nodejs]
+symbol = ""
+style = "bold green"
+format = '\[[node ${version}]($style)\]'
+
+[dotnet]
+symbol = ""
+style = "bold magenta"
+# Adaptasi dari format bracketed preset dotnet (punya $tfm)
+format = '\[[dotnet ${version}( $tfm)]($style)\]'
+
+[docker_context]
+symbol = ""
+style = "bold red"
+format = '\[[docker $context]($style)\]'
+
+# ---------------------------
+# Exit status
+# ---------------------------
+[status]
+disabled = false
+symbol = ""
+format = '\[[exit $status]($style)\]'
+
+# ---------------------------
+# Prompt char + vi-mode indicator
+# ---------------------------
+[character]
+success_symbol = "[>](bold green)"
+error_symbol = "[x](bold red)"
+vimcmd_symbol = "[<](bold yellow)"
+vimcmd_visual_symbol = "[<](bold yellow)"
+vimcmd_replace_symbol = "[<](bold purple)"
+vimcmd_replace_one_symbol = "[<](bold purple)"
+

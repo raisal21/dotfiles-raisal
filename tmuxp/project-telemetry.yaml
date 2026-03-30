@@ -1,0 +1,23 @@
+session_name: project-telemetry
+start_directory: ~/workspace/realtime-monitoring
+
+windows:
+  - window_name: core-services
+    layout: main-horizontal
+    options:
+      main-pane-height: 70% # Panel nvim mengambil 70% layar atas
+    panes:
+      - nvim . # Panel 1 (Atas): Editor utama
+      - clear # Panel 2 (Bawah): Standby untuk log/server
+
+  - window_name: data-pipeline
+    layout: main-horizontal
+    options:
+      main-pane-height: 70%
+    panes:
+      - nvim . # Panel 1 (Atas): Editor sekunder
+      - clear # Panel 2 (Bawah): Standby untuk worker/script
+
+  - window_name: sys-console
+    panes:
+      - clear # Window 3: Terminal utuh untuk navigasi Git/Ops
