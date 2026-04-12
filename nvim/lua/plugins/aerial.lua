@@ -8,7 +8,6 @@ return {
 	keys = {
 		-- Buka tutup outline window di kanan
 		{ "<leader>o", "<cmd>AerialToggle!<CR>", desc = "Toggle Outline (Aerial)" },
-		-- CRACKED FEATURE: Fuzzy find isi file ini berdasarkan symbol (fungsi/class)
 		{ "<leader>fs", "<cmd>Telescope aerial<CR>", desc = "Find Symbols (Telescope)" },
 	},
 	opts = {

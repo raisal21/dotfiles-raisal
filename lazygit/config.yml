@@ -1,0 +1,29 @@
+gui:
+  # 1. GARIS KAKU & TIPIS
+  border: "single" # Pilihan: single, double, rounded, hidden. 'single' adalah yang paling retro.
+
+  # 2. HILANGKAN ELEMEN MODERN
+  showIcons: false # Murni teks ASCII
+
+  # 3. TEMA WARNA TERMINAL KLASIK
+  theme:
+    # Warna border saat panel sedang aktif (fokus)
+    activeBorderColor:
+      - cyan
+      - bold
+    # Warna border saat panel tidak aktif
+    inactiveBorderColor:
+      - white
+    # Gaya kursor saat memilih baris (reverse = efek block klasik)
+    selectedLineBgColor:
+      - default
+      - reverse
+    # Warna teks biasa
+    textColor:
+      - default
+
+    optionsTextColor:
+      - white
+
+    bg:
+      - default

@@ -1,42 +1,63 @@
 return {
-    "nvim-lualine/lualine.nvim",
-    event = "VeryLazy",
-    opts = {
-        options = {
-            theme = "auto", -- Otomatis ikut warna neovim
-            globalstatus = true, -- SATU statusline untuk semua window (Modern Look)
-            -- Kosongkan ini kalau mau tampilan kotak (Blocky) ala Windows NT
-            section_separators = { left = '', right = ''},
-            component_separators = { left = '', right = ''},
-        },
-        sections = {
-            -- Kiri
-            lualine_a = { "mode" },
-            lualine_b = { "branch", "diff", "diagnostics" },
-            lualine_c = {
-                {
-                    function()
-                        return vim.fn.expand('%:h:t') -- Ambil nama folder terdekat
-                    end,
-                    icon = ' ', -- Kasih ikon folder biar jelas (Wajib install Nerd Fonts)
-                    color = { fg = '#a9b1d6', gui = 'italic' }, -- Warnanya agak redup & miring biar aesthetic
-                    padding = { right = 1 }, -- Jarak dikit ke kanan
+	"nvim-lualine/lualine.nvim",
+	event = "VeryLazy",
+	opts = {
+		options = {
+			theme = "auto",
+			globalstatus = true,
+			-- RETRO LOOK: Pakai string kosong untuk transisi antar warna yang kaku (tegak lurus)
+			-- Ini akan memberikan efek "Blocky" ala Windows NT atau BIOS.
+			section_separators = { left = "", right = "" },
+			-- Pakai pipa tipis sebagai pemisah komponen di dalam blok yang sama
+			component_separators = { left = "│", right = "│" },
+		},
+		sections = {
+			lualine_a = {
+				{
+					"mode",
+					-- Format mode jadi huruf kapital semua dengan tanda strip ala terminal klasik
+					fmt = function(str)
+						return "-- " .. str:upper() .. " --"
+					end,
+				},
+			},
+			lualine_b = {
+				{ "branch", icon = "" }, -- Ikon git minimalis
+				{
+					"diff",
+					-- Pakai simbol ASCII standar untuk diff agar tetap retro
+					symbols = { added = "+", modified = "~", removed = "-" },
+				},
+			},
 
-                },
+			-- KOMPONEN C DIHAPUS: Sesuai request untuk dipindah ke Winbar nantinya
+			lualine_c = {},
 
-                -- Komponen 2: Nama File Asli
-                {
-                    "filename",
-                    path = 0, -- 0 = Nama file doang (biar gak dobel path-nya)
-                    color = { gui = 'bold' }, -- Filename dibikin tebal biar menonjol
-                    padding = { left = 1 },
-                }
-            },
-            -- Kanan
-            lualine_x = { "filetype" }, -- Gak perlu encoding/fileformat, menuhin tempat
-            lualine_y = { "progress" },
-            lualine_z = { "location" },
-        },
-        -- Inactive sections bisa dihapus, biarkan default (abu-abu)
-    },
+			lualine_x = {
+				{
+					"diagnostics",
+					-- Gunakan inisial huruf untuk diagnostik, bukan ikon besar
+					symbols = { error = "E:", warn = "W:", info = "I:", hint = "H:" },
+				},
+				"filetype",
+			},
+			lualine_y = {
+				{
+					"progress",
+					fmt = function(str)
+						return "pos: " .. str
+					end,
+				},
+			},
+			lualine_z = {
+				{
+					"location",
+					-- Format lokasi baris/kolom dengan prefix kaku
+					fmt = function(str)
+						return "ln: " .. str
+					end,
+				},
+			},
+		},
+	},
 }
