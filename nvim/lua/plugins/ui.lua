@@ -39,19 +39,8 @@ return {
 	},
 
 	{
-		"kylesnowschwartz/cobalt-neon.nvim",
-		lazy = true,
-	},
-
-	-- Katalog lengkap Black Metal (Termasuk varian Venom, Bathory, dll)
-	{
 		"metalelf0/black-metal-theme-neovim",
 		lazy = true,
-	},
-
-	-- Estetika Retro Synthwave 84
-	{
-		"LunarVim/synthwave84.nvim",
-		lazy = true,
+		event = "VeryLazy",
 	},
 }

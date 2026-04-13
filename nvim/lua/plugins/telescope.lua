@@ -241,8 +241,9 @@ return {
 
 		keymap("n", "<leader>/", search_current_file_only, { desc = "Regex Search Current File" })
 		keymap("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
-		keymap("n", "<leader>fg", live_multigrep, { desc = "Multi Grep" })
+		keymap("n", "<leader>fg", live_multigrep, { desc = "Live Grep" })
+		keymap("n", "<leader>fc", builtin.colorscheme, { desc = "Colorscheme" })
 		keymap("n", "<leader>fb", builtin.buffers, { desc = "Find Buffers" })
-		keymap("n", "<leader>hm", manage_harpoon, { desc = "Manage Harpoon List" })
+		keymap("n", "<leader>fh", manage_harpoon, { desc = "Manage Harpoon List" })
 	end,
 }

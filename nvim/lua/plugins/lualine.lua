@@ -17,12 +17,12 @@ return {
 					"mode",
 					-- Format mode jadi huruf kapital semua dengan tanda strip ala terminal klasik
 					fmt = function(str)
-						return "-- " .. str:upper() .. " --"
+						return " " .. str:upper() .. " "
 					end,
 				},
 			},
 			lualine_b = {
-				{ "branch", icon = "" }, -- Ikon git minimalis
+				{ "branch", icon = " " }, -- Ikon git minimalis
 				{
 					"diff",
 					-- Pakai simbol ASCII standar untuk diff agar tetap retro
