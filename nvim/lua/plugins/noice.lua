@@ -165,7 +165,14 @@ return {
 
 		-- ─── VIEWS: semua border = 'single', no rounded ───────────────────────
 		views = {
-
+			notify = {
+				border = { style = "single" },
+				size = { width = 60, max_height = "50%" },
+				win_options = {
+					wrap = true,
+					winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
+				},
+			},
 			-- Notifikasi pop-up pojok kanan bawah (mini backend, built-in noice)
 			mini = {
 				timeout = 3000,
@@ -190,18 +197,17 @@ return {
 				border = { style = "single" },
 				win_options = {
 					winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
+					wrap = true, -- [DITAMBAHKAN] Paksa teks di-wrap jika melebihi batas
 				},
 			},
 
 			-- LSP hover docs dan sejenisnya
 			hover = {
 				border = { style = "single" },
-				size = { max_width = 80, max_height = 20 },
 				win_options = {
 					winhighlight = "Normal:NormalFloat,FloatBorder:FloatBorder",
 				},
 			},
-
 			-- Dialog konfirmasi (misal: `vim.ui.select`)
 			confirm = {
 				border = { style = "single" },
@@ -222,30 +228,34 @@ return {
 
 		-- ─── ROUTES: filter pesan-pesan noisy ─────────────────────────────────
 		routes = {
-			-- Skip pesan "X lines written", "X lines yanked", dll. — terlalu noisy
 			{
-				filter = { event = "msg_show", kind = "", find = "written" },
+				filter = {
+					event = "msg_show",
+					any = {
+						{ find = "%d+L, %d+B" }, -- Menangkap pesan save (misal: "10L, 200B")
+						{ find = "written" }, -- Menangkap pesan save eksplisit
+						{ find = "yanked" }, -- Menangkap pesan copy (y)
+						{ find = "fewer lines" }, -- Menangkap pesan hapus (d)
+						{ find = "more lines" }, -- Menangkap pesan paste (p)
+						{ find = "changes;" }, -- Menangkap pesan undo/redo (u / C-r)
+						{ find = "already at newest" }, -- Pesan mentok saat redo
+					},
+				},
 				opts = { skip = true },
 			},
-			{
-				filter = { event = "msg_show", kind = "", find = "line" },
-				opts = { skip = true },
-			},
-			-- Skip search_count karena sudah ada sebagai virtualtext
-			{
-				filter = { event = "msg_show", kind = "search_count" },
-				opts = { skip = true },
-			},
+
+			{ filter = { event = "msg_show", kind = "search_count" }, opts = { skip = true } },
+			{ filter = { event = "cmdline", find = "^%s*[wW]" }, opts = { skip = true } },
 			-- Output command yang sangat panjang langsung ke split
 			{
 				view = "split",
-				filter = { event = "msg_show", min_height = 20 },
+				filter = { event = "msg_show", min_height = 10 },
 			},
 
 			{
 				filter = {
 					event = "cmdline",
-					find = "^%s*[wW]", -- match :w, :W, :wa, :wq, dll
+					find = "^%s*[wWq]", -- match :w, :W, :wa, :wq, dll
 				},
 				opts = { skip = true },
 			},

@@ -20,7 +20,6 @@ opt.smartcase = true -- Tapi kalau search 'Hello', dia strict case sensitive
 opt.updatetime = 50 -- Percepat update UI (default 4000ms terlalu lambat buat plugin git/LSP)
 opt.scrolloff = 8 -- **PENTING**: Biarkan 8 baris sisa di atas/bawah kursor saat scroll (Jaga konteks)
 opt.smoothscroll = true
-opt.colorcolumn = "81"
 opt.textwidth = 120
 opt.confirm = true
 

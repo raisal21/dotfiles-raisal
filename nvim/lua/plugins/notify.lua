@@ -7,7 +7,7 @@ return {
 		-- "compact" : judul + ikon level di baris atas, pesan di bawahnya.
 		--             Paling informatif dan retro — tidak ada padding tebal.
 		-- Alternatif yang lebih minimal: "minimal" (tanpa judul/ikon sama sekali)
-		render = "compact",
+		render = "minimal",
 
 		-- Tidak ada animasi fade/opacity — langsung muncul dan slide ke luar.
 		-- Paling "terminal-like" dan tidak buang CPU.
@@ -16,25 +16,12 @@ return {
 		-- ─── UKURAN & POSISI ───────────────────────────────────────────────────
 		top_down = true, -- notifikasi terbaru di atas (kanan atas layar)
 		minimum_width = 30,
-		-- max_width dan max_height bisa di-set juga jika perlu:
-		-- max_width  = 60,
+		max_width = 40,
 		-- max_height = 10,
 
 		-- ─── TIMING ───────────────────────────────────────────────────────────
 		fps = 30,
 		timeout = 4000, -- 4 detik cukup untuk dibaca, tidak terlalu lama
-
-		-- ─── ICON ASCII — konsisten dengan gaya retro ─────────────────────────
-		-- Tidak pakai nerd font icon berat, cukup simbol ASCII/unicode sederhana
-		icons = {
-			ERROR = "E",
-			WARN = "W",
-			INFO = "I",
-			DEBUG = "D",
-			TRACE = "T",
-		},
-
-		-- ─── BORDER SINGLE via on_open ─────────────────────────────────────────
 		-- nvim-notify tidak punya opsi border langsung, harus lewat on_open
 		on_open = function(win)
 			vim.api.nvim_win_set_config(win, { border = "single" })

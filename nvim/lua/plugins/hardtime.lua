@@ -1,8 +1,12 @@
 return {
 	"m4xshen/hardtime.nvim",
-	dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim" },
+	dependencies = { "MunifTanjim/nui.nvim", "nvim-lua/plenary.nvim", "folke/noice.nvim" },
 	opts = {
 		max_count = 3,
+
+		callback = function(msg)
+			vim.notify(msg, vim.log.levels.WARN, { title = "Hardtime" })
+		end,
 
 		restricted_keys = {
 			["j"] = { "n", "x", count = 3 },
