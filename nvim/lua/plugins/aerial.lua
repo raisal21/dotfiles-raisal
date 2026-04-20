@@ -1,7 +1,7 @@
 return {
 	"stevearc/aerial.nvim",
 	dependencies = {
-		"nvim-treesitter/nvim-treesitter",
+		"neovim-treesitter/nvim-treesitter",
 		"nvim-tree/nvim-web-devicons",
 		"nvim-telescope/telescope.nvim", -- Wajib buat integrasi fuzzy finder
 	},

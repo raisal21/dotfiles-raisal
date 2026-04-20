@@ -245,19 +245,11 @@ return {
 			},
 
 			{ filter = { event = "msg_show", kind = "search_count" }, opts = { skip = true } },
-			{ filter = { event = "cmdline", find = "^%s*[wW]" }, opts = { skip = true } },
+			{ filter = { event = "cmdline", find = "^%s*[wWq]a?%s*$" }, opts = { skip = true } },
 			-- Output command yang sangat panjang langsung ke split
 			{
 				view = "split",
 				filter = { event = "msg_show", min_height = 10 },
-			},
-
-			{
-				filter = {
-					event = "cmdline",
-					find = "^%s*[wWq]", -- match :w, :W, :wa, :wq, dll
-				},
-				opts = { skip = true },
 			},
 		},
 	},

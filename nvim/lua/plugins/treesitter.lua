@@ -1,91 +1,58 @@
 return {
-	"nvim-treesitter/nvim-treesitter",
-
+	"neovim-treesitter/nvim-treesitter",
+	branch = "main",
+	lazy = false, -- WAJIB: Plugin ini sekarang tidak mendukung lazy-loading
 	build = ":TSUpdate",
 	dependencies = {
-		"nvim-treesitter/nvim-treesitter-textobjects",
+		"neovim-treesitter/treesitter-parser-registry",
 	},
 	config = function()
-		local configs = require("nvim-treesitter.configs")
+		-- Daftar bahasa yang ingin diinstall
+		local langs = {
+			-- Bahasa Dasar & Config
+			"c",
+			"lua",
+			"vim",
+			"vimdoc",
+			"query",
+			"bash",
 
-		configs.setup({
-			-- Daftar parser yang WAJIB ada
-			ensure_installed = {
+			-- Web Development (Basic)
+			"html",
+			"css",
+			"javascript",
+			"typescript",
+			"python",
 
-				-- Bahasa Dasar & Config
-				"c",
-				"lua",
-				"vim",
-				"vimdoc",
-				"query",
-				"bash",
+			-- TAMBAHAN BARU KAMU:
+			"c_sharp",
+			"xml",
+			"yaml",
+			"toml",
+			"astro",
+			"tsx",
+			"zsh", -- Tambahan baru
+			"tmux",
+		}
 
-				-- Web Development (Basic)
+		-- 1. Install parsers & queries (Menggantikan `ensure_installed`)
+		require("nvim-treesitter").install(langs)
 
-				"html",
-				"css",
-				"javascript",
-				"typescript",
-				"python",
+		-- 2. Aktifkan fitur per-bahasa (Menggantikan `highlight` dan `indent` di setup lama)
+		-- Fitur ini TIDAK aktif secara otomatis di versi baru.
+		vim.api.nvim_create_autocmd("FileType", {
+			pattern = langs,
+			callback = function()
+				-- Mengaktifkan Highlighting
+				vim.treesitter.start()
 
-				-- TAMBAHAN BARU KAMU:
-				"c_sharp", -- Untuk C# / .NET
-				"xml", -- Untuk XML
-				"yaml", -- Untuk YAML
-				"toml", -- Untuk TOML
-				"astro", -- Untuk Astro Framework
-				"tsx", -- Untuk React (JSX/TSX)
-			},
+				-- Mengaktifkan Treesitter Folds (Opsional, bawaan Neovim)
+				-- vim.wo.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+				-- vim.wo.foldmethod = "expr"
 
-			-- Install parser secara background
-			sync_install = false,
-
-			-- Otomatis install parser kalau buka file bahasa baru
-			auto_install = true,
-
-			-- Fitur Highlighting
-			highlight = {
-				enable = true,
-				additional_vim_regex_highlighting = false,
-			},
-
-			-- Fitur Indentasi
-			indent = { enable = true },
-
-			textobjects = {
-				select = {
-					enable = true,
-					lookahead = true, -- Otomatis lompat ke textobject terdekat
-					keymaps = {
-						-- FUNGSI & CLASS
-						["af"] = { query = "@function.outer", desc = "Select outer part of a function" },
-						["if"] = { query = "@function.inner", desc = "Select inner part of a function" },
-						["ac"] = { query = "@class.outer", desc = "Select outer part of a class" },
-						["ic"] = { query = "@class.inner", desc = "Select inner part of a class" },
-
-						-- ARGUMENT / PARAMETER
-						["aa"] = { query = "@parameter.outer", desc = "Select outer part of an argument" },
-						["ia"] = { query = "@parameter.inner", desc = "Select inner part of an argument" },
-
-						-- SCOPE BLOCK
-						["ab"] = { query = "@block.outer", desc = "Select outer part of a block" },
-						["ib"] = { query = "@block.inner", desc = "Select inner part of a block" },
-
-						-- LOGIC & CONTROL FLOW
-						["al"] = { query = "@loop.outer", desc = "Select outer part of a loop" },
-						["il"] = { query = "@loop.inner", desc = "Select inner part of a loop" },
-						["a/"] = { query = "@conditional.outer", desc = "Select outer part of a conditional" },
-						["i/"] = { query = "@conditional.inner", desc = "Select inner part of a conditional" },
-
-						-- EKSEKUSI & ASSIGNMENT
-						["ax"] = { query = "@call.outer", desc = "Select outer part of a function call" },
-						["ix"] = { query = "@call.inner", desc = "Select inner part of a function call" },
-						["a="] = { query = "@assignment.outer", desc = "Select outer part of an assignment" },
-						["r="] = { query = "@assignment.rhs", desc = "Select right hand side of an assignment" },
-						["l="] = { query = "@assignment.lhs", desc = "Select left hand side of an assignment" },
-					},
-				},
-			},
+				-- Mengaktifkan Treesitter Indentation
+				vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+			end,
 		})
 	end,
 }

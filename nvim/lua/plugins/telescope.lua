@@ -1,6 +1,6 @@
 return {
 	"nvim-telescope/telescope.nvim",
-	tag = "0.1.6",
+	tag = "v0.2.2",
 	dependencies = { "nvim-lua/plenary.nvim" },
 
 	config = function()
@@ -15,6 +15,17 @@ return {
 		local pickers = require("telescope.pickers")
 		local keymap = vim.keymap.set
 
+		-- Layout per fungsi
+		local function find_files()
+			builtin.find_files(require("telescope.themes").get_ivy({
+				borderchars = {
+					prompt = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+					results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
+					preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+				},
+				height = 0.4,
+			}))
+		end
 		-- Ambil multi-selection, fallback ke current entry jika tidak ada
 		local function get_selections(prompt_bufnr)
 			local picker = action_state.get_current_picker(prompt_bufnr)
@@ -31,6 +42,10 @@ return {
 
 		telescope.setup({
 			defaults = {
+				-- INI KUNCINYA: Matikan API treesitter jadul agar Telescope tidak crash
+				preview = {
+					treesitter = false,
+				},
 				borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
 				mappings = {
 					i = {
@@ -83,7 +98,6 @@ return {
 		})
 
 		local function manage_harpoon()
-			local conf = require("telescope.config").values
 			local file_paths = {}
 
 			for _, item in ipairs(harpoon:list().items) do
@@ -95,13 +109,20 @@ return {
 				return
 			end
 
-			require("telescope.pickers")
+			pickers
 				.new({}, {
 					prompt_title = "Harpoon ─ <Tab> mark │ <C-d>/<d> delete",
 					finder = require("telescope.finders").new_table({ results = file_paths }),
 					previewer = conf.file_previewer({}),
 					sorter = conf.generic_sorter({}),
-
+					require("telescope.themes").get_dropdown({
+						borderchars = {
+							prompt = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+							results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
+							preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+						},
+						previewer = false,
+					}),
 					attach_mappings = function(prompt_bufnr, map)
 						local function delete_marked()
 							local selections = get_selections(prompt_bufnr)
@@ -115,7 +136,6 @@ return {
 							-- 1. Buat peta (lookup table) dari file yang ingin dihapus
 							local to_remove = {}
 							for _, entry in ipairs(selections) do
-								-- Untuk finder new_table, value string murni ada di entry[1] atau entry.value
 								local target = entry[1] or entry.value
 								if target then
 									to_remove[target] = true
@@ -166,46 +186,61 @@ return {
 				return
 			end
 
-			builtin.live_grep({
+			builtin.live_grep(require("telescope.themes").get_dropdown({
+				borderchars = {
+					prompt = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+					results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
+					preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+				},
 				prompt_title = "Current Buffer",
 				search_dirs = { current_file },
-
-				-- INI KUNCINYA: Menyembunyikan nama file/path dari hasil pencarian
 				path_display = "hidden",
-
-				-- Mematikan sorter bawaan agar hasil urut sesuai nomor baris dari atas ke bawah
 				sorter = require("telescope.sorters").empty(),
-			})
+				width = 0.6,
+				height = 0.4,
+			}))
+		end
+
+		local function pick_colorscheme()
+			builtin.colorscheme(require("telescope.themes").get_dropdown({
+				width = 0.4,
+				height = 0.5,
+				enable_preview = true,
+			}))
 		end
 
 		local function live_multigrep(opts)
 			opts = opts or {}
 			opts.cwd = opts.cwd or vim.uv.cwd()
 
-			-- Membuat proses pencarian berjalan di latar belakang (async) agar Neovim tidak nge-freeze
+			opts.layout_strategy = "horizontal" -- Gunakan horizontal untuk preview di kanan
+			opts.layout_config = {
+				horizontal = {
+					preview_width = 0.5, -- Beri ruang 50% untuk preview di kanan
+				},
+				width = 0.9,
+				height = 0.8,
+			}
+
 			local finder = finders.new_async_job({
 				command_generator = function(prompt)
 					if not prompt or prompt == "" then
 						return nil
 					end
 
-					-- PECAH PROMPT: Kita gunakan DUA SPASI sebagai pemisah
 					local pieces = vim.split(prompt, "  ")
 					local args = { "rg" }
 
-					-- 1. Bagian pertama adalah teks yang ingin dicari (-e)
 					if pieces[1] then
 						table.insert(args, "-e")
 						table.insert(args, pieces[1])
 					end
 
-					-- 2. Bagian kedua adalah filter file/folder (-g) menggunakan glob
 					if pieces[2] then
 						table.insert(args, "-g")
 						table.insert(args, pieces[2])
 					end
 
-					-- Argumen wajib Ripgrep agar outputnya bisa dibaca dan diwarnai oleh Telescope
 					local rg_defaults = {
 						"--color=never",
 						"--no-heading",
@@ -222,28 +257,25 @@ return {
 					return args
 				end,
 
-				-- Mengubah output Ripgrep menjadi baris-baris hasil di layar Telescope
 				entry_maker = make_entry.gen_from_vimgrep(opts),
 				cwd = opts.cwd,
 			})
 
 			pickers
 				.new(opts, {
-					debounce = 100, -- Jeda 100ms saat mengetik agar tidak membebani CPU
+					debounce = 100,
 					prompt_title = "Multi Grep",
 					finder = finder,
 					previewer = conf.grep_previewer(opts),
-					-- Mematikan sorting Telescope agar Ripgrep yang mengambil alih urutannya
 					sorter = require("telescope.sorters").empty(),
 				})
 				:find()
 		end
 
 		keymap("n", "<leader>/", search_current_file_only, { desc = "Regex Search Current File" })
-		keymap("n", "<leader>ff", builtin.find_files, { desc = "Find Files" })
+		keymap("n", "<leader>ff", find_files, { desc = "Find Files" })
 		keymap("n", "<leader>fg", live_multigrep, { desc = "Live Grep" })
-		keymap("n", "<leader>fc", builtin.colorscheme, { desc = "Colorscheme" })
-		keymap("n", "<leader>fb", builtin.buffers, { desc = "Find Buffers" })
+		keymap("n", "<leader>fc", pick_colorscheme, { desc = "Colorscheme" })
 		keymap("n", "<leader>fh", manage_harpoon, { desc = "Manage Harpoon List" })
 	end,
 }

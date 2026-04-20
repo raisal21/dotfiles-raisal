@@ -3,7 +3,7 @@ return {
 	-- Load otomatis saat ngebuka atau bikin file baru
 	event = { "BufReadPost", "BufNewFile", "BufWritePre" },
 	-- Pastikan treesitter utama jalan duluan
-	dependencies = { "nvim-treesitter/nvim-treesitter" },
+	dependencies = { "neovim-treesitter/nvim-treesitter" },
 
 	opts = {
 		enable = true,
