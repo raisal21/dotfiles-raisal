@@ -48,11 +48,35 @@ return {
 	},
 
 	-- 3. Comment: Komentar cepat (gcc / gb)
+	{ "JoosepAlviste/nvim-ts-context-commentstring", lazy = true },
 	{
 		"numToStr/Comment.nvim",
 		event = "VeryLazy", -- Biar nvim gak berat pas startup, baru load pas mau dipake
+		dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
 		config = function()
-			require("Comment").setup()
+			require("Comment").setup({
+				padding = true,
+				sticky = true,
+				ignore = "^$",
+				toggler = {
+					line = "gcc",
+					block = "gbc",
+				},
+				opleader = {
+					line = "gc",
+					block = "gb",
+				},
+				extra = {
+					above = "gcO",
+					below = "gco",
+					eol = "gcA",
+				},
+				mappings = {
+					basic = true,
+					extra = true,
+				},
+				pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+			})
 		end,
 	},
 	{
