@@ -90,4 +90,21 @@ return {
 			exclude = {}, -- Jika ada command yang ingin dikecualikan
 		},
 	},
+	{
+		"windwp/nvim-ts-autotag",
+		event = { "BufReadPre", "BufNewFile" },
+		opts = {
+			-- Masukkan ke dalam blok opts.opts untuk versi v1.0.0+
+			opts = {
+				enable_close = true, -- Auto tutup tag: <div> -> <div></div>
+				enable_rename = true, -- Ganti nama tag pasangan otomatis
+				enable_close_on_slash = true, -- Ketik / langsung tutup tag (<br/>)
+			},
+			-- Bisa tambahkan per filetype jika ingin lebih spesifik
+			per_filetype = {
+				["html"] = { enable_close_on_slash = true },
+				["typescriptreact"] = { enable_close_on_slash = true },
+			},
+		},
+	},
 }

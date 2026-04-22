@@ -16,6 +16,28 @@ return {
 
 		sources = {
 			default = { "lsp", "path", "snippets", "buffer" },
+			providers = {
+				lsp = {
+					name = "LSP",
+					enabled = true,
+					module = "blink.cmp.sources.lsp",
+					-- Prioritas tertinggi: Native tags (button, h1), method TS, variabel
+					score_offset = 100,
+				},
+				snippets = {
+					name = "Snippets",
+					enabled = true,
+					module = "blink.cmp.sources.snippets",
+					-- Prioritas kedua: Snippets buatan atau dari friendly-snippets
+					score_offset = 80,
+				},
+				buffer = {
+					name = "Buffer",
+					enabled = true,
+					module = "blink.cmp.sources.buffer",
+					score_offset = 50,
+				},
+			},
 		},
 
 		fuzzy = {
