@@ -50,8 +50,33 @@ return {
 				"scss",
 				"less",
 			},
+			init_options = {
+				includeLanguages = {
+					typescriptreact = "html",
+					javascriptreact = "html",
+				},
+			},
 		})
 
+		vim.lsp.config("tailwindcss", {
+			filetypes = {
+				"html",
+				"css",
+				"scss",
+				"sass",
+				"less",
+				"javascriptreact",
+				"typescriptreact",
+			},
+			settings = {
+				tailwindCSS = {
+					includeLanguages = {
+						typescriptreact = "html",
+						javascriptreact = "html",
+					},
+				},
+			},
+		})
 		-- ✅ Enable semua server yang sudah di-install Mason
 		vim.lsp.enable({
 			"ts_ls",

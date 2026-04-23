@@ -11,6 +11,7 @@ return {
 		{ "<leader>fs", "<cmd>Telescope aerial<CR>", desc = "Find Symbols (Telescope)" },
 	},
 	opts = {
+		close_automatic_events = { "unfocus", "switch_buffer", "unsupported" },
 		-- 1. LAYOUT & ESTETIKA (Cocok dengan tema retro/border single kamu)
 		layout = {
 			max_width = { 40, 0.2 },
@@ -53,10 +54,6 @@ return {
 			vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr, desc = "Previous Symbol" })
 			-- Lompat ke symbol selanjutnya
 			vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr, desc = "Next Symbol" })
-
-			-- Bonus: Lompat ke Parent Symbol (Keluar dari nested function ke function utama)
-			vim.keymap.set("n", "[[", "<cmd>AerialPrevUp<CR>", { buffer = bufnr, desc = "Jump Up Symbol" })
-			vim.keymap.set("n", "]]", "<cmd>AerialNextUp<CR>", { buffer = bufnr, desc = "Jump Down Symbol" })
 		end,
 	},
 

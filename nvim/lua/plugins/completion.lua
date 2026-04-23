@@ -21,8 +21,8 @@ return {
 					name = "LSP",
 					enabled = true,
 					module = "blink.cmp.sources.lsp",
-					-- Prioritas tertinggi: Native tags (button, h1), method TS, variabel
 					score_offset = 100,
+					fallbacks = { "buffer" },
 				},
 				snippets = {
 					name = "Snippets",
@@ -30,6 +30,13 @@ return {
 					module = "blink.cmp.sources.snippets",
 					-- Prioritas kedua: Snippets buatan atau dari friendly-snippets
 					score_offset = 80,
+					opts = {
+						friendly_snippets = true,
+						extended_filetypes = {
+							typescriptreact = { "html" },
+							javascriptreact = { "html" },
+						},
+					},
 				},
 				buffer = {
 					name = "Buffer",
