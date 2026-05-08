@@ -5,5 +5,14 @@ return {
 	-- dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-tree/nvim-web-devicons' }, -- if you prefer nvim-web-devicons
 	---@module 'render-markdown'
 	---@type render.md.UserConfig
-	opts = {},
+	opts = {
+		pipe_table = {
+			-- Fitur ini akan merender tabel dengan border yang cantik
+			-- dan berusaha menjaga tampilan sel tetap rapi.
+			preset = "double",
+			enabled = true,
+			style = "full", -- atau "grid"
+			cell = "overlay",
+		},
+	},
 }
