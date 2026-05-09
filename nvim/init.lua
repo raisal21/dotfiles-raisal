@@ -1,3 +1,4 @@
+vim.loader.enable()
 require("raisal.options")
 pcall(require, "raisal.keymaps")
 require("raisal.lazy")
