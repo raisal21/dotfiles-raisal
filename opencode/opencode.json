@@ -1,0 +1,28 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "explore",
+  "agent": {
+    "general": {
+      "mode": "all"
+    },
+    "explore": {
+      "mode": "all"
+    }
+  },
+  "command": {
+    "react-doctor": {
+      "description": "Run React Doctor analysis (lint, dead code, a11y, bundle, architecture)",
+      "template": "Run react-doctor on this project: execute `npx -y react-doctor@latest . --verbose` and report the health score (0-100). List any critical issues found — especially security, performance, and correctness problems. If this is after code changes, use `--diff` flag instead to check for regressions."
+    }
+  },
+  "mcp": {
+    "bm25": {
+      "type": "local",
+      "command": ["node", "/home/raisal/.config/opencode/bm25-mcp/server.mjs"],
+      "enabled": true
+    }
+  },
+  "plugin": [
+    "@tarquinen/opencode-dcp@latest"
+  ]
+}
