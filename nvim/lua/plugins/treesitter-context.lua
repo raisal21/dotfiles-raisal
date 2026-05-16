@@ -20,7 +20,7 @@ return {
 
 		-- Tambahan Bonus: Shortcut buat nyalain/matiin kalau lagi sumpek
 		-- Kamu bisa pakai <leader>tc (Toggle Context)
-		vim.keymap.set("n", "<leader>tc", function()
+		vim.keymap.set("n", "<leader>uc", function()
 			require("treesitter-context").toggle()
 		end, { desc = "Toggle Treesitter Context" })
 	end,

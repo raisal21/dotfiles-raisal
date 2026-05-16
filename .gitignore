@@ -1,4 +1,5 @@
 *.log
 gh/hosts.yml
 hunk/
+nvim/cheatsheet.md
 

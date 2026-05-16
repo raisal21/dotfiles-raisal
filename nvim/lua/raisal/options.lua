@@ -18,10 +18,13 @@ opt.wrap = false -- Jangan turunkan teks panjang ke bawah (biar kode tetap rapi 
 opt.ignorecase = true -- Search 'hello' akan ketemu 'Hello'
 opt.smartcase = true -- Tapi kalau search 'Hello', dia strict case sensitive
 opt.updatetime = 50 -- Percepat update UI (default 4000ms terlalu lambat buat plugin git/LSP)
+vim.o.ttimeoutlen = 10 -- Cepetin timeout key sequence (biar double-esc di terminal mode gak delay)
 opt.scrolloff = 8 -- **PENTING**: Biarkan 8 baris sisa di atas/bawah kursor saat scroll (Jaga konteks)
 opt.smoothscroll = true
 opt.textwidth = 120
 opt.confirm = true
+opt.scrollback = 1000000 -- Max scrollback di terminal buffer (biar scroll history panjang)
+opt.path = ".,**" -- gf recursive dari cwd
 
 -- System Integration (WSL2 Specific)
 opt.clipboard = "unnamedplus" -- Hubungkan clipboard Neovim dengan Windows (via xclip di WSL)

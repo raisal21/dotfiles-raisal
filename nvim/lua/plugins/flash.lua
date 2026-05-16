@@ -3,6 +3,9 @@ return {
 	event = "VeryLazy",
 	---@type Flash.Config
 	opts = {
+		modes = {
+			char = { enabled = false },
+		},
 		search = {
 			-- Memodifikasi pola pencarian
 			mode = function(str)

@@ -3,6 +3,9 @@ require("raisal.options")
 pcall(require, "raisal.keymaps")
 require("raisal.lazy")
 require("raisal.lsp")
+pcall(require, "raisal.terminal")
+pcall(require, "raisal.workspaces")
+pcall(require, "raisal.sessions")
 
 vim.opt.backupcopy = "yes"
 vim.opt.winbar = "%#WinBar#%=  %f %m  %="
@@ -36,5 +39,19 @@ vim.api.nvim_create_autocmd("FileType", {
 	callback = function()
 		vim.wo.number = true
 		vim.wo.relativenumber = true
+	end,
+})
+
+-- Auto-save session tiap 20 menit (safety net anti crash)
+vim.api.nvim_create_autocmd("VimEnter", {
+	group = vim.api.nvim_create_augroup("SessionAutoSave", { clear = true }),
+	callback = function()
+		local dir = vim.fn.stdpath("data") .. "/sessions"
+		vim.fn.mkdir(dir, "p")
+		vim.fn.timer_start(20 * 60 * 1000, function()
+			vim.schedule(function()
+				require("raisal.sessions").save_auto()
+			end)
+		end, { ["repeat"] = -1 })
 	end,
 })

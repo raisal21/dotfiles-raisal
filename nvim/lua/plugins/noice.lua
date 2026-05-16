@@ -245,7 +245,6 @@ return {
 			},
 
 			{ filter = { event = "msg_show", kind = "search_count" }, opts = { skip = true } },
-			{ filter = { event = "cmdline", find = "^%s*[wWq]a?%s*$" }, opts = { skip = true } },
 			-- Output command yang sangat panjang langsung ke split
 			{
 				view = "split",
