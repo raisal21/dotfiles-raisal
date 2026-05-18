@@ -42,7 +42,7 @@ return {
 					name = "Buffer",
 					enabled = true,
 					module = "blink.cmp.sources.buffer",
-					score_offset = -30,
+					score_offset = 50,
 				},
 			},
 		},
@@ -53,7 +53,7 @@ return {
 		},
 
 		cmdline = {
-			keymap = { preset = "inherit" },
+			keymap = { preset = "inherit" }, -- pakai keymap yang sama dengan insert mode
 			completion = { menu = { auto_show = true } },
 		},
 

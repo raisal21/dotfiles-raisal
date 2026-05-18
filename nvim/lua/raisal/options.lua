@@ -23,7 +23,7 @@ opt.scrolloff = 8 -- **PENTING**: Biarkan 8 baris sisa di atas/bawah kursor saat
 opt.smoothscroll = true
 opt.textwidth = 120
 opt.confirm = true
-opt.scrollback = 1000000 -- Max scrollback di terminal buffer (biar scroll history panjang)
+opt.showtabline = 0 -- hide tabline (tmux handle windows/tabs)
 opt.path = ".,**" -- gf recursive dari cwd
 
 -- System Integration (WSL2 Specific)
@@ -31,6 +31,9 @@ opt.clipboard = "unnamedplus" -- Hubungkan clipboard Neovim dengan Windows (via 
 opt.mouse = "a" -- Mouse tetap aktif (kadang berguna buat resize window split)
 opt.splitright = true -- Vertical split muncul di kanan
 opt.splitbelow = true -- Horizontal split muncul di bawah
+
+-- Auto-reload when file changed externally (agent edits, git checkout, etc.)
+opt.autoread = true
 
 -- Swap & Backup (Biar direktori kerja bersih)
 opt.swapfile = false -- Jangan buat file .swp sampah

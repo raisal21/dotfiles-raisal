@@ -3,12 +3,32 @@ require("raisal.options")
 pcall(require, "raisal.keymaps")
 require("raisal.lazy")
 require("raisal.lsp")
-pcall(require, "raisal.terminal")
-pcall(require, "raisal.workspaces")
-pcall(require, "raisal.sessions")
 
 vim.opt.backupcopy = "yes"
 vim.opt.winbar = "%#WinBar#%=  %f %m  %="
+
+-- === Auto-reload files changed externally (agent/pi/opencode/claude edits) ===
+local autoreload_group = vim.api.nvim_create_augroup("AutoReload", { clear = true })
+
+-- Poll for file changes on focus gain and idle (CursorHold fires every 50ms thanks to updatetime=50)
+vim.api.nvim_create_autocmd({ "FocusGained", "CursorHold" }, {
+  group = autoreload_group,
+  command = "silent! checktime",
+})
+
+-- When Vim detects a file changed, auto-reload without prompt
+-- (even if buffer has unsaved changes — discards them silently)
+vim.api.nvim_create_autocmd("FileChangedShell", {
+  group = autoreload_group,
+  nested = true,
+  callback = function(args)
+    vim.schedule(function()
+      vim.api.nvim_buf_call(args.buf, function()
+        vim.cmd("edit!") -- force-reload from disk, discard local changes
+      end)
+    end)
+  end,
+})
 local theme = "kanagawa"
 if theme == "moonfly" then
 	-- Palet Moonfly (Dark Grey/Charcoal)
@@ -42,16 +62,3 @@ vim.api.nvim_create_autocmd("FileType", {
 	end,
 })
 
--- Auto-save session tiap 20 menit (safety net anti crash)
-vim.api.nvim_create_autocmd("VimEnter", {
-	group = vim.api.nvim_create_augroup("SessionAutoSave", { clear = true }),
-	callback = function()
-		local dir = vim.fn.stdpath("data") .. "/sessions"
-		vim.fn.mkdir(dir, "p")
-		vim.fn.timer_start(20 * 60 * 1000, function()
-			vim.schedule(function()
-				require("raisal.sessions").save_auto()
-			end)
-		end, { ["repeat"] = -1 })
-	end,
-})

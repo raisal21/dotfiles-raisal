@@ -2,11 +2,31 @@
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "explore",
   "agent": {
-    "general": {
-      "mode": "all"
-    },
     "explore": {
-      "mode": "all"
+      "mode": "all",
+      "permission": {
+        "bash": "deny"
+      }
+    },
+    "research": {
+      "description": "Research agent: fetches official docs, API references, and best practices from the web. Read-only, web-heavy, no file modifications.",
+      "mode": "subagent",
+      "prompt": "{file:/home/raisal/.config/opencode/prompts/research.md}",
+      "permission": {
+        "edit": "deny",
+        "write": "deny",
+        "bash": "deny"
+      }
+    },
+    "brainstorm": {
+      "description": "Ideas partner: explore possibilities, tradeoffs, alternatives. Discuss articles, designs, and approaches. Read-only — never writes code or implementation plans.",
+      "mode": "primary",
+      "prompt": "{file:/home/raisal/.config/opencode/prompts/brainstorm.md}",
+      "permission": {
+        "edit": "deny",
+        "write": "deny",
+        "bash": "deny"
+      }
     }
   },
   "command": {
@@ -20,9 +40,28 @@
       "type": "local",
       "command": ["node", "/home/raisal/.config/opencode/bm25-mcp/server.mjs"],
       "enabled": true
+    },
+    "context7": {
+      "type": "local",
+      "command": ["npx", "-y", "@upstash/context7-mcp"],
+      "env": {
+        "CTX7_API_KEY": "${env:CONTEXT7_API_KEY}"
+      },
+      "enabled": true
+    },
+    "postgres": {
+      "type": "local",
+      "command": ["npx", "-y", "@modelcontextprotocol/server-postgres", "postgresql://admin:quest@localhost:8812/qdb"],
+      "enabled": true
+    },
+    "microsoft-learn": {
+      "type": "http",
+      "url": "https://learn.microsoft.com/api/mcp",
+      "enabled": true
     }
   },
   "plugin": [
-    "@tarquinen/opencode-dcp@latest"
+    "@tarquinen/opencode-dcp@latest",
+    "vim"
   ]
 }

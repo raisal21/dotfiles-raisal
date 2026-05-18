@@ -1,5 +1,5 @@
 import { readFile } from "node:fs/promises";
-import { execSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 import { createInterface } from "node:readline";
 import path from "node:path";
 import { BM25 } from "fast-bm25";
@@ -80,13 +80,15 @@ async function bm25Search(params) {
 
   let candidateFiles;
   try {
-    const rgArgs = ["rg", "--line-number", "--color=never", "--files-with-matches"];
+    const rgArgs = ["--line-number", "--color=never", "--files-with-matches"];
     if (glob) rgArgs.push("--glob", glob);
     rgArgs.push(rgPattern, cwd);
-    const output = execSync(rgArgs.join(" "), { encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 });
-    candidateFiles = output.trim().split("\n").filter(Boolean);
+    const result = spawnSync("rg", rgArgs, { encoding: "utf-8", maxBuffer: 10 * 1024 * 1024 });
+    if (result.error) throw new Error(`ripgrep failed: ${result.error.message}`);
+    if (result.status === 1) return "No matches found";
+    if (result.status !== 0) throw new Error(`ripgrep failed with status ${result.status}`);
+    candidateFiles = result.stdout.trim().split("\n").filter(Boolean);
   } catch (err) {
-    if (err.status === 1) return "No matches found";
     throw new Error(`ripgrep failed: ${err.message}`);
   }
 

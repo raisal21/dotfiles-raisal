@@ -1,0 +1,2 @@
+# Wrap long lines at character boundary instead of mid-word
+--wrap=character
