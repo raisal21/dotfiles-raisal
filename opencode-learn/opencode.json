@@ -1,0 +1,33 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "default_agent": "learn",
+  "agent": {
+    "learn": {
+      "mode": "primary",
+      "temperature": 0.3,
+      "permission": {
+        "edit": "deny",
+        "bash": {
+          "*": "deny",
+          "dotnet build": "allow",
+          "dotnet run": "allow",
+          "dotnet test": "allow"
+        },
+        "task": {
+          "*": "deny",
+          "brutally-honest": "allow"
+        }
+      }
+    },
+    "brutally-honest": {
+      "mode": "subagent",
+      "hidden": true,
+      "temperature": 0.1,
+      "permission": {
+        "edit": "deny",
+        "write": "deny",
+        "bash": "deny"
+      }
+    }
+  }
+}

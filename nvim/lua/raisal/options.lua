@@ -17,7 +17,8 @@ opt.smartindent = true -- Neovim menebak indentasi baru dengan cerdas
 opt.wrap = false -- Jangan turunkan teks panjang ke bawah (biar kode tetap rapi horizontal)
 opt.ignorecase = true -- Search 'hello' akan ketemu 'Hello'
 opt.smartcase = true -- Tapi kalau search 'Hello', dia strict case sensitive
-opt.updatetime = 50 -- Percepat update UI (default 4000ms terlalu lambat buat plugin git/LSP)
+opt.updatetime = 250 -- responsive untuk gitsigns/LSP CursorHold, tidak boros syscall
+vim.opt.shortmess:append("Wsa") -- skip "written"/search/abbrev messages (replace noice route filters)
 vim.o.ttimeoutlen = 10 -- Cepetin timeout key sequence (biar double-esc di terminal mode gak delay)
 opt.scrolloff = 8 -- **PENTING**: Biarkan 8 baris sisa di atas/bawah kursor saat scroll (Jaga konteks)
 opt.smoothscroll = true
@@ -46,12 +47,12 @@ vim.g.maplocalleader = "\\"
 
 -- Highlight teks sejenak saat di-yank (copy)
 vim.api.nvim_create_autocmd("TextYankPost", {
-	desc = "Highlight teks saat yank",
-	group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
-	callback = function()
-		vim.highlight.on_yank({
-			higroup = "IncSearch", -- Warna highlight (bisa diganti "Visual" kalau mau beda)
-			timeout = 200, -- Durasi highlight dalam milidetik
-		})
-	end,
+  desc = "Highlight teks saat yank",
+  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+  callback = function()
+    vim.highlight.on_yank({
+      higroup = "IncSearch", -- Warna highlight (bisa diganti "Visual" kalau mau beda)
+      timeout = 200, -- Durasi highlight dalam milidetik
+    })
+  end,
 })

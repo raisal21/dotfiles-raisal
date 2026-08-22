@@ -9,7 +9,6 @@ keymap("n", "<C-h>", "<C-w>h", { desc = "Window left" })
 keymap("n", "<C-l>", "<C-w>l", { desc = "Window right" })
 keymap("n", "<leader>v", "<C-v>", { desc = "Visual Block Mode" })
 
-keymap("n", "<leader>rn", vim.lsp.buf.rename, { desc = "Rename (Global)" })
 keymap("n", "<Esc>", "<cmd>nohlsearch<CR>", { desc = "Clear Search Highlights" })
 
 keymap("n", "<C-d>", "<C-d>zz", { desc = "Scroll down & center" })

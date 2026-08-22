@@ -1,15 +1,17 @@
 return {
-	"obsidian-nvim/obsidian.nvim",
-	version = "*", -- use latest release, remove to use latest commit
-	---@module 'obsidian'
-	---@type obsidian.config
-	opts = {
-		legacy_commands = false, -- this will be removed in 4.0.0
-		workspaces = {
-			{
-				name = "personal",
-				path = "/mnt/c/Users/PC-Windows/Documents/wsl-notebook",
-			},
-		},
-	},
+  "obsidian-nvim/obsidian.nvim",
+  version = "*",
+  ft = "markdown",
+  ---@module 'obsidian'
+  ---@type obsidian.config
+  opts = {
+    legacy_commands = false,
+    workspaces = {
+      {
+        name = "personal",
+        path = vim.env.NOTEBOOK_PATH or vim.fn.expand("~/notebook"),
+      },
+    },
+    ui = { enable = false }, -- render-markdown handles inline rendering
+  },
 }

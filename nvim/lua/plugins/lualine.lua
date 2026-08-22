@@ -1,53 +1,53 @@
 return {
-	"nvim-lualine/lualine.nvim",
-	event = "VeryLazy",
-	opts = {
-		options = {
-			theme = "auto",
-			globalstatus = true,
-			section_separators = { left = "", right = "" },
-			component_separators = { left = "│", right = "│" },
-		},
-		sections = {
-			lualine_a = {
-				{
-					"mode",
-					fmt = function(str)
-						return " " .. str:upper() .. " "
-					end,
-				},
-			},
-			lualine_b = {
-				{ "branch", icon = " " },
-				{
-					"diff",
-					symbols = { added = "+", modified = "~", removed = "-" },
-				},
-			},
-			lualine_c = {},
-			lualine_x = {
-				{
-					"diagnostics",
-					symbols = { error = "E:", warn = "W:", info = "I:", hint = "H:" },
-				},
-				"filetype",
-			},
-			lualine_y = {
-				{
-					"progress",
-					fmt = function(str)
-						return "pos: " .. str
-					end,
-				},
-			},
-			lualine_z = {
-				{
-					"location",
-					fmt = function(str)
-						return "ln: " .. str
-					end,
-				},
-			},
-		},
-	},
+  "nvim-lualine/lualine.nvim",
+  event = "VeryLazy",
+  opts = {
+    options = {
+      theme = "auto",
+      globalstatus = true,
+      section_separators = { left = "", right = "" },
+      component_separators = { left = "│", right = "│" },
+    },
+    sections = {
+      lualine_a = {
+        {
+          "mode",
+          fmt = function(str)
+            return " " .. str:upper() .. " "
+          end,
+        },
+      },
+      lualine_b = {
+        { "branch", icon = " " },
+        {
+          "diff",
+          symbols = { added = "+", modified = "~", removed = "-" },
+        },
+      },
+      lualine_c = {},
+      lualine_x = {
+        {
+          "diagnostics",
+          symbols = { error = "E:", warn = "W:", info = "I:", hint = "H:" },
+        },
+        "filetype",
+      },
+      lualine_y = {
+        {
+          "progress",
+          fmt = function(str)
+            return "pos: " .. str
+          end,
+        },
+      },
+      lualine_z = {
+        {
+          "location",
+          fmt = function(str)
+            return "ln: " .. str
+          end,
+        },
+      },
+    },
+  },
 }

@@ -1,0 +1,1 @@
+/home/raisal/workspace/opencode-learn/platform/agents/learn.md

@@ -1,5 +1,9 @@
 *.log
 gh/hosts.yml
+dconf/
+google-chrome-for-testing/
+carapace/bridge/zsh/.zcompdump_capture
+nvim/.claude/settings.local.json
+uv/uv-receipt.json
 hunk/
 nvim/cheatsheet.md
-

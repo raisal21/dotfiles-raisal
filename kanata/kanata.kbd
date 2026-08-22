@@ -1,0 +1,78 @@
+;; Konfigurasi Kanata v1.11.0 untuk TypeScript & EK40 (Revisi Stabil & Terintegrasi win-vind)
+(defcfg
+  ;; Mengizinkan tombol yang tidak dipetakan tetap berfungsi
+  process-unmapped-keys yes
+
+  ;; Wajib diaktifkan jika menggunakan defchordsv2 (Combos)
+  concurrent-tap-hold yes
+)
+
+(defsrc
+  q w e r t y u i o p
+  a s d f g h j k l ;
+  z x c v b n m , . /
+  caps lalt spc
+)
+
+(defvar
+  tap-time 200
+  hold-time 280     ;; Dikembalikan ke 280ms agar aman dari misfire saat ngetik cepat
+  chord-time 50     ;; Jeda maksimal antar jari (ms) agar terbaca sebagai combo
+)
+
+;; KOMBINASI TOMBOL (Chords v2)
+;; Format: (tombol) hasil batas-waktu tipe-release (layer-pengecualian)
+(defchordsv2
+  (j k) ret   $chord-time first-release ()
+  (d f) bspc  $chord-time first-release ()
+  (o p) @arr  $chord-time first-release ()
+  (x c) C-bspc $chord-time first-release ()
+  (, .) S-ret $chord-time first-release ()
+)
+
+;; ALIAS
+(defalias
+  ;; Caps Lock: Tap untuk Esc, Hold untuk Layer Navigasi
+  cap (tap-hold-release $tap-time $hold-time esc (layer-toggle navigation))
+
+  ;; Space: Tap untuk Spasi murni, Hold untuk Layer Simbol
+  sym (tap-hold-release $tap-time $hold-time spc (layer-toggle symbols))
+
+  ;; Home Row Mods Kiri (Hanya di tombol s-d-f)
+  alt-s (tap-hold-release $tap-time $hold-time s lalt)
+  ctl-d (tap-hold-release $tap-time $hold-time d lctl)
+  sft-f (tap-hold-release $tap-time $hold-time f lsft)
+
+  ;; Home Row Mods Kanan (Hanya di tombol j-k-l)
+  sft-j (tap-hold-release $tap-time $hold-time j rsft)
+  ctl-k (tap-hold-release $tap-time $hold-time k rctl)
+  alt-l (tap-hold-release $tap-time $hold-time l ralt)
+
+  ;; Macro TypeScript Arrow Function
+  ;; = lalu Shift + . (titik)
+  arr (macro = S-.)
+)
+
+;; LAYER 0: Base
+(deflayer base
+  q w e r t y u i o p
+  a @alt-s @ctl-d @sft-f g h @sft-j @ctl-k @alt-l ;
+  z x c v b n m , . /
+  @cap lalt @sym
+)
+
+;; LAYER 1: Navigasi (Aktif saat Caps Lock ditahan)
+(deflayer navigation
+  _ _ _ _ _ _ _ _ _ _
+  _ _ _ _ _ left down up rght _
+  _ _ _ _ _ C-left C-down C-up C-rght _
+  _ _ _
+)
+
+;; LAYER 2: Simbol TypeScript (Aktif saat Spasi ditahan)
+(deflayer symbols
+  S-1  S-2  S-3  S-4  S-5  S-6  S-7  S-8  S-9  S-0
+  [  ]  S-9  S-0  S--  -  S-[  S-]   `    S-;
+  _    _    _    S-`  S-=  S-\   \    S-,    S-.    S-/
+  _    _    _
+)
