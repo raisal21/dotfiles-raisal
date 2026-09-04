@@ -42,8 +42,18 @@ return {
     "kylechui/nvim-surround",
     version = "*", -- Use for stability; omit to use `main` branch for the latest features
     event = "VeryLazy",
+    init = function()
+      -- Flash owns `S` in visual mode.
+      vim.g.nvim_surround_no_visual_mappings = true
+    end,
     config = function()
       require("nvim-surround").setup({})
+      vim.keymap.set("x", "gsa", "<Plug>(nvim-surround-visual)", {
+        desc = "Add surround around visual selection",
+      })
+      vim.keymap.set("x", "gsA", "<Plug>(nvim-surround-visual-line)", {
+        desc = "Add surround around visual selection on new lines",
+      })
     end,
   },
 
