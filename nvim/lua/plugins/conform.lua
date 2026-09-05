@@ -15,15 +15,17 @@ return {
         json = { "prettier" },
         html = { "prettier" },
         css = { "prettier" },
-        -- python = { "isort", "black" }, -- Bisa pakai banyak formatter berurutan!
+        yaml = { "prettier" },
+        markdown = { "prettier" },
+        graphql = { "prettier" },
       },
 
       -- 2. MAGIC: OTOMATIS RAPI SAAT DI-SAVE
       format_on_save = {
         -- Kalau formatter (misal prettier) gagal/nggak ada, pakai LSP bawaan
-        lsp_fallback = true,
+        lsp_format = "fallback",
         async = false,
-        timeout_ms = 500, -- Kalau dalam 0.5 detik gagal nge-format, batalkan aja biar Neovim nggak nge-freeze
+        timeout_ms = 1000,
       },
     })
 
@@ -31,10 +33,10 @@ return {
     -- Bisa di mode Normal (n) atau Visual block (v)
     vim.keymap.set({ "n", "v" }, "<leader>f", function()
       require("conform").format({
-        lsp_fallback = true,
+        lsp_format = "fallback",
         async = false,
-        timeout_ms = 500,
+        timeout_ms = 1000,
       })
-    end, { desc = "Format code", icon = "󰉩" })
+    end, { desc = "Format code" })
   end,
 }

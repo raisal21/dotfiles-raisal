@@ -1,5 +1,6 @@
 return {
   "stevearc/aerial.nvim",
+  event = { "BufReadPost", "BufNewFile" },
   dependencies = {
     "neovim-treesitter/nvim-treesitter",
     "nvim-tree/nvim-web-devicons",
@@ -7,10 +8,17 @@ return {
   },
   keys = {
     -- Buka tutup outline window di kanan
-    { "<leader>o", "<cmd>AerialToggle!<CR>", desc = "Toggle Outline (Aerial)" },
+    { "<leader>ta", "<cmd>AerialToggle!<CR>", desc = "Toggle Outline (Aerial)" },
     { "<leader>fs", "<cmd>Telescope aerial<CR>", desc = "Find Symbols (Telescope)" },
   },
   opts = {
+    -- Roslyn has the most complete C# symbol model; keep Treesitter as fallback
+    -- for buffers opened before the language server is ready.
+    backends = {
+      _ = { "treesitter", "lsp", "markdown", "asciidoc", "man" },
+      cs = { "lsp", "treesitter" },
+      csharp = { "lsp", "treesitter" },
+    },
     close_automatic_events = { "unfocus", "switch_buffer", "unsupported" },
     -- 1. LAYOUT & ESTETIKA (Cocok dengan tema retro/border single kamu)
     layout = {
@@ -31,30 +39,47 @@ return {
 
     -- 2. NOISE FILTERING (Hanya tampilkan arsitektur penting)
     filter_kind = {
-      "Class",
-      "Constructor",
-      "Enum",
-      "Function",
-      "Interface",
-      "Module",
-      "Method",
-      "Struct",
-      "Property", -- Wajib untuk C#
-      "Field", -- Wajib untuk C#
-      "Constant", -- Wajib untuk React Arrow Functions
-      "Variable", -- Opsional: Nyalakan jika ingin melihat React State/Hooks
+      _ = {
+        "Class",
+        "Constructor",
+        "Enum",
+        "Function",
+        "Interface",
+        "Module",
+        "Method",
+        "Struct",
+        "Property",
+        "Field",
+        "Constant",
+        "Variable",
+      },
+      cs = {
+        "Namespace",
+        "Class",
+        "Interface",
+        "Struct",
+        "Enum",
+        "Constructor",
+        "Method",
+        "Property",
+        "Field",
+        "Event",
+        "EnumMember",
+      },
+      csharp = {
+        "Namespace",
+        "Class",
+        "Interface",
+        "Struct",
+        "Enum",
+        "Constructor",
+        "Method",
+        "Property",
+        "Field",
+        "Event",
+        "EnumMember",
+      },
     },
-
-    -- 3. HIJACK TOMBOL NAVIGASI ({ dan })
-    -- Menggunakan on_attach adalah "Galaxy Brain Move".
-    -- Kenapa? Karena tombol { dan } hanya akan di-hijack di file kode (Lua, JS, Python).
-    -- Kalau kamu buka file teks biasa (.txt / markdown), { dan } tetap normal lompat paragraf!
-    on_attach = function(bufnr)
-      -- Lompat ke symbol sebelumnya
-      vim.keymap.set("n", "{", "<cmd>AerialPrev<CR>", { buffer = bufnr, desc = "Previous Symbol" })
-      -- Lompat ke symbol selanjutnya
-      vim.keymap.set("n", "}", "<cmd>AerialNext<CR>", { buffer = bufnr, desc = "Next Symbol" })
-    end,
   },
 
   -- Inject Aerial ke dalam Telescope secara otomatis

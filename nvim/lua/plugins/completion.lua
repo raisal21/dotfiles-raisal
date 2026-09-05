@@ -8,7 +8,17 @@ return {
   opts_extend = { "sources.default" },
 
   opts = {
-    keymap = { preset = "default", ["<Tab>"] = { "accept", "fallback" } },
+    keymap = {
+      preset = "default",
+      ["<Tab>"] = { "accept", "fallback" },
+      -- <C-b> direbut dari scroll-documentation-up preset menjadi trigger
+      -- menu snippet saja (show-only, tanpa auto-accept).
+      ["<C-b>"] = {
+        function(cmp)
+          return cmp.show({ providers = { "snippets" } })
+        end,
+      },
+    },
 
     appearance = {
       -- use_nvim_cmp_as_default sudah tidak ada di docs terbaru, hapus

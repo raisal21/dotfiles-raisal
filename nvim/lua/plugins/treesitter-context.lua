@@ -13,13 +13,14 @@ return {
     multiline_threshold = 1,
     trim_scope = "outer",
     mode = "cursor", -- Kalkulasi konteks berdasarkan kursor, lebih presisi
+    max_lines = 4,
   },
 
   config = function(_, opts)
     require("treesitter-context").setup(opts)
 
     -- Tambahan Bonus: Shortcut buat nyalain/matiin kalau lagi sumpek
-    -- Kamu bisa pakai <leader>tc (Toggle Context)
+    -- Kamu bisa pakai <leader>uc (Toggle Context)
     vim.keymap.set("n", "<leader>uc", function()
       require("treesitter-context").toggle()
     end, { desc = "Toggle Treesitter Context" })

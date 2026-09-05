@@ -1,0 +1,112 @@
+{
+  "xUnit test class": {
+    "prefix": "xunitclass",
+    "body": [
+      "public sealed class ${1:Service}Tests",
+      "{",
+      "    private readonly ${2:Service} _sut = new();",
+      "",
+      "    $0",
+      "}"
+    ],
+    "description": "Create an xUnit test class"
+  },
+  "xUnit fact": {
+    "prefix": "xunitfact",
+    "body": [
+      "[Fact]",
+      "public void ${1:MethodName}_Should_${2:ExpectedBehavior}()",
+      "{",
+      "    // Arrange",
+      "    var value = ${3:42};",
+      "",
+      "    // Act",
+      "    var result = value;",
+      "",
+      "    // Assert",
+      "    Assert.Equal(${4:42}, result);",
+      "    $0",
+      "}"
+    ],
+    "description": "Create an xUnit fact with Arrange/Act/Assert"
+  },
+  "xUnit async fact": {
+    "prefix": "xunitasync",
+    "body": [
+      "[Fact]",
+      "public async Task ${1:MethodName}_Should_${2:ExpectedBehavior}()",
+      "{",
+      "    // Arrange",
+      "    var value = ${3:true};",
+      "",
+      "    // Act",
+      "    var result = await Task.FromResult(value);",
+      "",
+      "    // Assert",
+      "    Assert.True(result);",
+      "    $0",
+      "}"
+    ],
+    "description": "Create an async xUnit fact"
+  },
+  "xUnit theory": {
+    "prefix": "xunittheory",
+    "body": [
+      "[Theory]",
+      "[InlineData(${1:1}, ${2:2}, ${3:3})]",
+      "public void ${4:Add}_Should_ReturnExpectedValue(int ${5:first}, int ${6:second}, int ${7:expected})",
+      "{",
+      "    Assert.Equal(${7:expected}, ${5:first} + ${6:second});",
+      "    $0",
+      "}"
+    ],
+    "description": "Create an xUnit theory with inline data"
+  },
+  "xUnit assert equal": {
+    "prefix": "xassert",
+    "body": [
+      "Assert.Equal(${1:expected}, ${2:actual});$0"
+    ],
+    "description": "Insert an xUnit equality assertion"
+  },
+  "xUnit async exception": {
+    "prefix": "xthrowasync",
+    "body": [
+      "await Assert.ThrowsAsync<${1:InvalidOperationException}>(async () =>",
+      "{",
+      "    ${2:await Task.CompletedTask;}",
+      "});$0"
+    ],
+    "description": "Assert that an async operation throws"
+  },
+  "Moq setup": {
+    "prefix": "moqsetup",
+    "body": [
+      "_mock${1:Dependency}",
+      "    .Setup(x => x.${2:Method}(${3}))",
+      "    .ReturnsAsync(${4:response});$0"
+    ],
+    "description": "Configure an async Moq setup"
+  },
+  "Moq verify": {
+    "prefix": "moqverify",
+    "body": [
+      "_mock${1:Dependency}.Verify(x => x.${2:Method}(${3}), Times.${4:Once}());$0"
+    ],
+    "description": "Verify a Moq invocation"
+  },
+  "xUnit using": {
+    "prefix": "xusing",
+    "body": [
+      "using Xunit;$0"
+    ],
+    "description": "Insert the xUnit using directive"
+  },
+  "Moq using": {
+    "prefix": "moqusing",
+    "body": [
+      "using Moq;$0"
+    ],
+    "description": "Insert the Moq using directive"
+  }
+}

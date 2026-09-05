@@ -39,15 +39,15 @@ return {
       },
     },
     keys = {
-      -- Tekan <leader>xx buat buka/tutup list error project
+      -- Keep diagnostics outside the <leader>t namespace used by navigation/tests.
       {
-        "<leader>tt",
+        "<leader>xx",
         "<cmd>Trouble diagnostics toggle<cr>",
         desc = "Diagnostics (Trouble)",
       },
-      -- Tekan <leader>xX buat error di file ini aja (Buffer)
+      -- Buffer diagnostics only.
       {
-        "<leader>tr",
+        "<leader>xB",
         "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
         desc = "Buffer Diagnostics (Trouble)",
       },

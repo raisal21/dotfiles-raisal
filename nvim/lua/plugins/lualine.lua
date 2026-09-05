@@ -1,3 +1,7 @@
+local function is_file_buffer()
+  return vim.bo.buftype == "" and vim.api.nvim_buf_get_name(0) ~= ""
+end
+
 return {
   "nvim-lualine/lualine.nvim",
   event = "VeryLazy",
@@ -46,6 +50,33 @@ return {
           fmt = function(str)
             return "ln: " .. str
           end,
+        },
+      },
+    },
+    winbar = {
+      lualine_c = {
+        {
+          "filename",
+          path = 1,
+          newfile_status = true,
+          cond = is_file_buffer,
+        },
+        {
+          "aerial",
+          sep = " > ",
+          depth = 4,
+          exact = false,
+          cond = is_file_buffer,
+        },
+      },
+    },
+    inactive_winbar = {
+      lualine_c = {
+        {
+          "filename",
+          path = 1,
+          newfile_status = true,
+          cond = is_file_buffer,
         },
       },
     },

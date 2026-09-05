@@ -19,7 +19,7 @@ opt.ignorecase = true -- Search 'hello' akan ketemu 'Hello'
 opt.smartcase = true -- Tapi kalau search 'Hello', dia strict case sensitive
 opt.updatetime = 250 -- responsive untuk gitsigns/LSP CursorHold, tidak boros syscall
 vim.opt.shortmess:append("Wsa") -- skip "written"/search/abbrev messages (replace noice route filters)
-vim.o.ttimeoutlen = 10 -- Cepetin timeout key sequence (biar double-esc di terminal mode gak delay)
+vim.o.ttimeoutlen = 100 -- Beri waktu untuk CSI terminal seperti <S-CR>
 opt.scrolloff = 8 -- **PENTING**: Biarkan 8 baris sisa di atas/bawah kursor saat scroll (Jaga konteks)
 opt.smoothscroll = true
 opt.textwidth = 120

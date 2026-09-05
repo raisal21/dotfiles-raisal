@@ -1,0 +1,19 @@
+{
+  "name": "raisal-csharp-snippets",
+  "contributes": {
+    "snippets": [
+      {
+        "language": ["cs", "csharp"],
+        "path": "./csharp.json"
+      },
+      {
+        "language": ["cs", "csharp"],
+        "path": "./csharp-aspnet.json"
+      },
+      {
+        "language": ["cs", "csharp"],
+        "path": "./csharp-test.json"
+      }
+    ]
+  }
+}

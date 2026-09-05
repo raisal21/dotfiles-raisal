@@ -1,0 +1,82 @@
+{
+  "Minimal API GET endpoint": {
+    "prefix": ["mapget", "csmapget"],
+    "body": [
+      "app.MapGet(\"${1:/api/items}\", (${2:CancellationToken cancellationToken}) =>",
+      "{",
+      "    ${3:return Results.Ok();}",
+      "});$0"
+    ],
+    "description": "Create an ASP.NET Minimal API GET endpoint"
+  },
+  "Minimal API async GET endpoint": {
+    "prefix": "mapgetasync",
+    "body": [
+      "app.MapGet(\"${1:/api/items}\", async (${2:CancellationToken cancellationToken}) =>",
+      "{",
+      "    ${3:await Task.CompletedTask;}",
+      "    return Results.Ok();",
+      "});$0"
+    ],
+    "description": "Create an async ASP.NET Minimal API GET endpoint"
+  },
+  "Minimal API POST endpoint": {
+    "prefix": ["mappost", "csmappost"],
+    "body": [
+      "app.MapPost(\"${1:/api/items}\", async (HttpRequest request, ${2:CancellationToken cancellationToken}) =>",
+      "{",
+      "    ${3:await Task.CompletedTask;}",
+      "    return Results.Accepted();",
+      "});$0"
+    ],
+    "description": "Create an ASP.NET Minimal API POST endpoint"
+  },
+  "Minimal API route group": {
+    "prefix": ["mapgroup", "csmapgroup"],
+    "body": [
+      "var ${1:api} = app.MapGroup(\"${2:/api}\");",
+      "$0"
+    ],
+    "description": "Create an ASP.NET Minimal API route group"
+  },
+  "Controller": {
+    "prefix": "cscontroller",
+    "body": [
+      "[ApiController]",
+      "[Route(\"api/[controller]\")]",
+      "public sealed class ${1:Items}Controller : ControllerBase",
+      "{",
+      "    [HttpGet]",
+      "    public IActionResult ${2:Get}()",
+      "    {",
+      "        return Ok();",
+      "    }",
+      "",
+      "    $0",
+      "}"
+    ],
+    "description": "Create an ASP.NET API controller"
+  },
+  "Controller body parameter": {
+    "prefix": "csfrombody",
+    "body": [
+      "[FromBody] ${1:CreateItemRequest} ${2:request}$0"
+    ],
+    "description": "Insert an ASP.NET controller body parameter"
+  },
+  "Primary constructor service": {
+    "prefix": "csservice",
+    "body": [
+      "public sealed class ${1:ItemService}(${2:IItemRepository repository})",
+      "{",
+      "    public async Task ${3:HandleAsync}(${4:CancellationToken cancellationToken})",
+      "    {",
+      "        ${5:await Task.CompletedTask;}",
+      "    }",
+      "",
+      "    $0",
+      "}"
+    ],
+    "description": "Create a DI-ready primary-constructor service"
+  }
+}

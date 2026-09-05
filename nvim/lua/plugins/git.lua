@@ -37,7 +37,7 @@ return {
         attach_to_untracked = false, -- File baru yg belum di-git add tidak akan ada tandanya
 
         -- Konfigurasi Ghost Text (Teks samar info commit di sebelah kanan)
-        current_line_blame = false, -- Default mati, nyalakan pakai <leader>tb
+        current_line_blame = false, -- Default mati, nyalakan pakai <leader>gb
         current_line_blame_opts = {
           virt_text = true,
           virt_text_pos = "eol", -- 'eol' | 'overlay' | 'right_align'
@@ -92,7 +92,7 @@ return {
 
           -- B. Preview & Blame (Lihat info)
           map("n", "<leader>hp", gitsigns.preview_hunk) -- Popup preview perubahan
-          map("n", "<leader>tb", gitsigns.toggle_current_line_blame) -- Toggle info siapa yg edit
+          map("n", "<leader>gb", gitsigns.toggle_current_line_blame, { desc = "Toggle Git blame" })
 
           -- C. Reset (Undo perubahan git)
           map("n", "<leader>hr", gitsigns.reset_hunk)

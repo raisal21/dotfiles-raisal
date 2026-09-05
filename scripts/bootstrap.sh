@@ -58,4 +58,13 @@ EOF
   echo "added NOTEBOOK_PATH to ~/.zshrc (edit if path differs on this machine)"
 fi
 
+# Source shell functions that live in the dotfiles repo.
+if [[ -f "${zshrc}" ]] && ! grep -Fq 'file-finder.zsh' "${zshrc}"; then
+  printf '\n%s\n%s\n' \
+    '# Global Windows and WSL file finder' \
+    'source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/file-finder.zsh"' \
+    >> "${zshrc}"
+  echo "added file finder to ~/.zshrc"
+fi
+
 echo "bootstrap done. Open a new shell or 'exec zsh' to pick up env vars."

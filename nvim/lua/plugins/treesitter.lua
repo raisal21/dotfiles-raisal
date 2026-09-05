@@ -7,7 +7,7 @@ return {
     "neovim-treesitter/treesitter-parser-registry",
   },
   config = function()
-    -- Daftar bahasa yang ingin diinstall
+    -- Parser IDs yang ingin diinstall. Filetype Neovim dipetakan terpisah di bawah.
     local langs = {
       -- Bahasa Dasar & Config
       "c",
@@ -16,6 +16,8 @@ return {
       "vimdoc",
       "query",
       "bash",
+      "markdown",
+      "markdown_inline",
 
       -- Web Development (Basic)
       "html",
@@ -35,6 +37,21 @@ return {
       "tmux",
     }
 
+    local parser_filetypes = {
+      bash = { "sh", "bash" },
+      c_sharp = { "cs", "csharp" },
+      javascript = { "javascript", "javascriptreact" },
+      tsx = { "typescriptreact", "typescript.tsx" },
+      xml = { "xml", "xsd", "xslt", "svg" },
+    }
+
+    local filetype_to_parser = {}
+    for _, parser in ipairs(langs) do
+      for _, filetype in ipairs(parser_filetypes[parser] or { parser }) do
+        filetype_to_parser[filetype] = parser
+      end
+    end
+
     -- 1. Install parsers & queries (Menggantikan `ensure_installed`)
     require("nvim-treesitter").install(langs)
 
@@ -45,14 +62,39 @@ return {
       return ok and stats and stats.size > MAX_TS_SIZE
     end
 
+    local function has_indent_query(parser)
+      local ok, query = pcall(vim.treesitter.query.get, parser, "indents")
+      return ok and query ~= nil
+    end
+
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = langs,
+      pattern = vim.tbl_keys(filetype_to_parser),
       callback = function(args)
+        local parser = filetype_to_parser[vim.bo[args.buf].filetype]
+        if not parser then
+          return
+        end
+
+        -- Let EditorConfig win when it defines indentation; otherwise C# uses
+        -- the conventional four-space fallback for projects without a config.
+        if parser == "c_sharp" then
+          local editorconfig = vim.b[args.buf].editorconfig or {}
+          if editorconfig.indent_size == nil and editorconfig.tab_width == nil then
+            vim.bo[args.buf].tabstop = 4
+            vim.bo[args.buf].shiftwidth = 4
+          end
+        end
+
         if buf_too_big(args.buf) then
           return
         end
-        vim.treesitter.start()
-        vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+
+        vim.treesitter.start(args.buf, parser)
+
+        -- C# has no Treesitter indents query. Keep runtime indent/cs.vim.
+        if has_indent_query(parser) then
+          vim.bo[args.buf].indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+        end
       end,
     })
   end,

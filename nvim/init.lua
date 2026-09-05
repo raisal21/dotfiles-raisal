@@ -1,11 +1,12 @@
 vim.loader.enable()
 require("raisal.options")
 pcall(require, "raisal.keymaps")
+require("raisal.comments").setup()
+require("raisal.autosave").setup()
 require("raisal.lazy")
 require("raisal.lsp")
 
 vim.opt.backupcopy = "yes"
-vim.opt.winbar = "%#WinBar#%=  %f %m  %="
 
 -- === Auto-reload files changed externally (agent/pi/opencode/claude edits) ===
 local autoreload_group = vim.api.nvim_create_augroup("AutoReload", { clear = true })

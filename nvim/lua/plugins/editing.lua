@@ -1,34 +1,4 @@
 return {
-  {
-    "stevearc/conform.nvim",
-    event = { "BufReadPre", "BufNewFile" },
-    config = function()
-      require("conform").setup({
-        -- DAFTAR FORMATTER
-        formatters_by_ft = {
-          lua = { "stylua" },
-          -- Web Dev Stack (Prettier semua)
-          javascript = { "prettier" },
-          typescript = { "prettier" },
-          javascriptreact = { "prettier" }, -- React .jsx/.tsx
-          typescriptreact = { "prettier" },
-          css = { "prettier" },
-          html = { "prettier" },
-          json = { "prettier" },
-          yaml = { "prettier" },
-          markdown = { "prettier" },
-          graphql = { "prettier" },
-        },
-        -- OPSI: FORMAT ON SAVE (Ala VS Code)
-        -- Kalau mau otomatis rapi pas save, pastikan ini nyala:
-        format_on_save = {
-          lsp_fallback = true,
-          async = false,
-          timeout_ms = 1000,
-        },
-      })
-    end,
-  },
   -- 1. Auto Pairs: Otomatis tutup kurung () [] {}
   {
     "windwp/nvim-autopairs",
@@ -64,6 +34,7 @@ return {
     event = "VeryLazy", -- Biar nvim gak berat pas startup, baru load pas mau dipake
     dependencies = { "JoosepAlviste/nvim-ts-context-commentstring" },
     config = function()
+      local pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook()
       require("Comment").setup({
         padding = true,
         sticky = true,
@@ -85,8 +56,9 @@ return {
           basic = true,
           extra = true,
         },
-        pre_hook = require("ts_context_commentstring.integrations.comment_nvim").create_pre_hook(),
+        pre_hook = pre_hook,
       })
+      require("raisal.comments").set_pre_hook(pre_hook)
     end,
   },
   {
@@ -104,9 +76,11 @@ return {
     "windwp/nvim-ts-autotag",
     event = { "BufReadPre", "BufNewFile" },
     opts = {
-      enable_close = true,
-      enable_rename = true,
-      enable_close_on_slash = true,
+      opts = {
+        enable_close = true,
+        enable_rename = true,
+        enable_close_on_slash = true,
+      },
       per_filetype = {
         ["html"] = { enable_close_on_slash = true },
         ["typescriptreact"] = { enable_close_on_slash = true },

@@ -1,0 +1,51 @@
+#!/usr/bin/env bash
+
+set -u
+
+usage() {
+  printf 'usage: %s set-mode STATE (windows|linux)\n' "$0" >&2
+  printf '       %s query STATE [QUERY]\n' "$0" >&2
+  exit 2
+}
+
+case "${1:-}" in
+  set-mode)
+    [[ $# -eq 3 ]] || usage
+    [[ "$3" == "windows" || "$3" == "linux" ]] || usage
+    printf '%s\n' "$3" > "$2"
+    ;;
+  query)
+    [[ $# -eq 2 || $# -eq 3 ]] || usage
+    query="${3:-}"
+    [[ -n "$query" ]] || exit 0
+
+    if [[ -r "$2" ]]; then
+      IFS= read -r source < "$2"
+    else
+      source=windows
+    fi
+
+    case "$source" in
+      windows)
+        command -v es.exe >/dev/null 2>&1 || exit 127
+        es.exe \
+          -p \
+          -n 2000 \
+          -full-path-and-name \
+          -txt \
+          -hide-empty-search-results \
+          "$query" 2>/dev/null | sed 's/\r$//'
+        ;;
+      linux)
+        command -v plocate >/dev/null 2>&1 || exit 127
+        plocate -i -l 2000 -- "$query" 2>/dev/null
+        ;;
+      *)
+        exit 2
+        ;;
+    esac
+    ;;
+  *)
+    usage
+    ;;
+esac

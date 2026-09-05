@@ -1,0 +1,149 @@
+{
+  "File-scoped namespace": {
+    "prefix": "csnamespace",
+    "body": [
+      "namespace ${1:MyApp};",
+      "",
+      "$0"
+    ],
+    "description": "Create a file-scoped namespace"
+  },
+  "Class": {
+    "prefix": "csclass",
+    "body": [
+      "public sealed class ${1:ClassName}",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "Create a sealed C# class"
+  },
+  "Record": {
+    "prefix": "csrecord",
+    "body": [
+      "public sealed record ${1:RecordName}(",
+      "    ${2:string Value}",
+      ");$0"
+    ],
+    "description": "Create a positional record"
+  },
+  "Interface": {
+    "prefix": "csinterface",
+    "body": [
+      "public interface I${1:Service}",
+      "{",
+      "    ${2:Task} ${3:HandleAsync}(${4:CancellationToken cancellationToken});",
+      "    $0",
+      "}"
+    ],
+    "description": "Create an interface with an async member"
+  },
+  "Enum": {
+    "prefix": "csenum",
+    "body": [
+      "public enum ${1:Status}",
+      "{",
+      "    ${2:Unknown},",
+      "    $0",
+      "}"
+    ],
+    "description": "Create an enum"
+  },
+  "Init-only property": {
+    "prefix": "csprop",
+    "body": [
+      "public ${1:string} ${2:Name} { get; init; }$0"
+    ],
+    "description": "Create an init-only property"
+  },
+  "Required property": {
+    "prefix": "csrequired",
+    "body": [
+      "public required ${1:string} ${2:Name} { get; init; }$0"
+    ],
+    "description": "Create a required init-only property"
+  },
+  "Constructor": {
+    "prefix": "csctor",
+    "body": [
+      "public ${1:ClassName}(${2})",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "Create a constructor"
+  },
+  "Primary constructor class": {
+    "prefix": "csprimary",
+    "body": [
+      "public sealed class ${1:Service}(${2:IDependency dependency})",
+      "{",
+      "    $0",
+      "}"
+    ],
+    "description": "Create a C# 12 primary-constructor class"
+  },
+  "Async method": {
+    "prefix": "csasync",
+    "body": [
+      "public async Task ${1:MethodAsync}(${2:CancellationToken cancellationToken})",
+      "{",
+      "    ${3:await Task.CompletedTask;}",
+      "    $0",
+      "}"
+    ],
+    "description": "Create an async Task method"
+  },
+  "Async method with result": {
+    "prefix": "csasyncresult",
+    "body": [
+      "public async Task<${1:Result}> ${2:MethodAsync}(${3:CancellationToken cancellationToken})",
+      "{",
+      "    ${4:await Task.CompletedTask;}",
+      "    return ${5:result};",
+      "    $0",
+      "}"
+    ],
+    "description": "Create an async Task method that returns a result"
+  },
+  "CancellationToken parameter": {
+    "prefix": "cstoken",
+    "body": [
+      "CancellationToken cancellationToken$0"
+    ],
+    "description": "Insert a cancellation token parameter"
+  },
+  "Dependency injection registration": {
+    "prefix": "csdi",
+    "body": [
+      "builder.Services.Add${1:Scoped}<${2:IService}, ${3:Service}>();$0"
+    ],
+    "description": "Register an interface and implementation in DI"
+  },
+  "Try catch": {
+    "prefix": "cstry",
+    "body": [
+      "try",
+      "{",
+      "    ${1:await Task.CompletedTask;}",
+      "}",
+      "catch (${2:Exception ex})",
+      "{",
+      "    ${3:throw;}",
+      "}",
+      "$0"
+    ],
+    "description": "Create a try/catch block"
+  },
+  "Switch expression": {
+    "prefix": "csswitch",
+    "body": [
+      "${1:value} switch",
+      "{",
+      "    ${2:Type} => ${3:result},",
+      "    _ => ${4:defaultResult},",
+      "};$0"
+    ],
+    "description": "Create a switch expression"
+  }
+}
