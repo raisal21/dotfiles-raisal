@@ -1,0 +1,27 @@
+{
+  "research_date": "2026-09-09",
+  "pi": {
+    "main_changelog": "https://raw.githubusercontent.com/earendil-works/pi/main/packages/coding-agent/CHANGELOG.md",
+    "numbered_release_count": 274,
+    "unreleased_section_count": 1,
+    "empty_release_count": 11,
+    "inventory": "pi-release-inventory.csv",
+    "feature_events": "pi-release-feature-events.csv",
+    "feature_event_rows": 2909,
+    "launch_boundaries": "pi-release-boundaries.csv",
+    "boundary_rule": "Keep source inception, first installable coding-agent artifact, first tagged coding-agent source, and the current-main-changelog initial-public-release label as separate records.",
+    "date_rule": {
+      "package_publication": "npm time[version]",
+      "github_release": "GitHub published_at",
+      "tag_creation": "annotated tagger date, otherwise target commit date",
+      "changelog_date": "documentary metadata only"
+    }
+  },
+  "opencode": {
+    "release_feed": "https://github.com/anomalyco/opencode/releases.atom",
+    "stable_release_observed": "1.18.29",
+    "stable_release_date": "2026-09-04T23:47:16Z",
+    "milestone_report": "release-timeline.md",
+    "complete_inventory": "NOT_IN_SCOPE_THIS_PASS"
+  }
+}

@@ -7,36 +7,6 @@ require("raisal.lazy")
 require("raisal.lsp")
 
 vim.opt.backupcopy = "yes"
-
--- === Auto-reload files changed externally (agent/pi/opencode/claude edits) ===
-local autoreload_group = vim.api.nvim_create_augroup("AutoReload", { clear = true })
-
--- Event-driven file change detection (no CursorHold polling).
-vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermClose", "TermLeave" }, {
-  group = autoreload_group,
-  command = "silent! checktime",
-})
-
--- When Vim detects a file changed, auto-reload only if buffer is clean.
--- Dirty buffer = warn + skip (avoid silent work loss).
-vim.api.nvim_create_autocmd("FileChangedShell", {
-  group = autoreload_group,
-  nested = true,
-  callback = function(args)
-    vim.schedule(function()
-      if vim.bo[args.buf].modified then
-        vim.notify(
-          "Buffer " .. vim.fn.bufname(args.buf) .. " modified externally + locally — reload skipped",
-          vim.log.levels.WARN
-        )
-        return
-      end
-      vim.api.nvim_buf_call(args.buf, function()
-        vim.cmd("edit!")
-      end)
-    end)
-  end,
-})
 -- Table-driven theme switch: autocmd handles WinBar hl + persists last choice.
 -- Swap via <leader>fc (telescope colorscheme picker) or :colorscheme <name>.
 local theme_palettes = {

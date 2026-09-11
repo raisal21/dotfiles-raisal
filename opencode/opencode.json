@@ -116,8 +116,12 @@
   "agent": {
     "explore": {
       "mode": "all",
+      "tools": {
+        "skill": true
+      },
       "permission": {
-        "bash": "deny"
+        "bash": "deny",
+        "edit": "deny"
       }
     },
     "research": {
@@ -173,7 +177,7 @@
     }
   },
   "plugin": [
-    "@tarquinen/opencode-dcp@latest",
-    "vim"
+    "@tarquinen/opencode-dcp@3.1.15",
+    "vim@0.1.0"
   ]
 }

@@ -1,0 +1,25 @@
+{
+  "research_date": "2026-09-09",
+  "pi": {
+    "current_repository": "https://github.com/earendil-works/pi",
+    "historical_repository": "https://github.com/badlogic/pi-mono",
+    "current_code_ref": "6160683a4a8012f0d1cd30c145df18b4ca6f5176",
+    "current_release": "0.85.1",
+    "current_release_ref": "d981de1229ef899957bbe968bc8dcda02a21f477",
+    "context7_ids": ["/earendil-works/pi", "/websites/pi_dev"]
+  },
+  "opencode": {
+    "current_repository": "https://github.com/anomalyco/opencode",
+    "historical_repository": "https://github.com/opencode-ai/opencode",
+    "current_code_ref": "dff8fbc149fb7492e4f07b713ac31ea70d9a541c",
+    "current_stable_release": "1.18.29",
+    "context7_ids": ["/anomalyco/opencode", "/websites/opencode_ai_plugins", "/anomalyco/opencode-sdk-js"]
+  },
+  "source_precedence": [
+    "pinned_source",
+    "official_docs_or_release",
+    "registry_metadata",
+    "context7",
+    "secondary_source"
+  ]
+}
