@@ -23,6 +23,26 @@ fi
 ln -sfn "${DOTFILES}" "${CONFIG}"
 echo "linked: ${CONFIG} -> ${DOTFILES}"
 
+# Keep the global Pi Advisor profile versioned with the dotfiles.
+PI_AGENT="${HOME}/.pi/agent"
+PI_ADVISOR_SOURCE="${DOTFILES}/pi/advisor.json"
+PI_ADVISOR_TARGET="${PI_AGENT}/advisor.json"
+
+if [[ -f "${PI_ADVISOR_SOURCE}" ]]; then
+  mkdir -p "${PI_AGENT}"
+  if [[ -L "${PI_ADVISOR_TARGET}" && "$(readlink "${PI_ADVISOR_TARGET}")" == "${PI_ADVISOR_SOURCE}" ]]; then
+    echo "linked: ${PI_ADVISOR_TARGET} -> ${PI_ADVISOR_SOURCE}"
+  else
+    if [[ -e "${PI_ADVISOR_TARGET}" || -L "${PI_ADVISOR_TARGET}" ]]; then
+      advisor_backup="${PI_ADVISOR_TARGET}.bak.$(date +%Y%m%d-%H%M%S)"
+      mv "${PI_ADVISOR_TARGET}" "${advisor_backup}"
+      echo "backed up existing Pi Advisor profile to ${advisor_backup}"
+    fi
+    ln -s "${PI_ADVISOR_SOURCE}" "${PI_ADVISOR_TARGET}"
+    echo "linked: ${PI_ADVISOR_TARGET} -> ${PI_ADVISOR_SOURCE}"
+  fi
+fi
+
 # Link the Windows Kanata config back to the repo when the target directory exists.
 KANATA_SOURCE="${DOTFILES}/kanata/kanata.kbd"
 KANATA_TARGET="${KANATA_CONFIG_PATH:-/mnt/c/Users/PC-Windows/Documents/Kanata/kanata.kbd}"
@@ -65,6 +85,16 @@ if [[ -f "${zshrc}" ]] && ! grep -Fq 'file-finder.zsh' "${zshrc}"; then
     'source "${XDG_CONFIG_HOME:-$HOME/.config}/zsh/file-finder.zsh"' \
     >> "${zshrc}"
   echo "added file finder to ~/.zshrc"
+fi
+
+# Keep deep-research model routing reproducible after Pi package installation.
+# Run this last so an unsupported upstream version cannot skip unrelated links.
+PI_WORKFLOW_PATCH="${DOTFILES}/scripts/patch-pi-dynamic-workflows.sh"
+PI_WORKFLOW_PACKAGE="${PI_DYNAMIC_WORKFLOWS_DIR:-${HOME}/.pi/agent/npm/node_modules/@quintinshaw/pi-dynamic-workflows}"
+if [[ -x "${PI_WORKFLOW_PATCH}" && -f "${PI_WORKFLOW_PACKAGE}/package.json" ]]; then
+  PI_DYNAMIC_WORKFLOWS_DIR="${PI_WORKFLOW_PACKAGE}" "${PI_WORKFLOW_PATCH}"
+elif [[ -x "${PI_WORKFLOW_PATCH}" ]]; then
+  echo "skipped Pi workflow patch: ${PI_WORKFLOW_PACKAGE} is not installed yet"
 fi
 
 echo "bootstrap done. Open a new shell or 'exec zsh' to pick up env vars."
