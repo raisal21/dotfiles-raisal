@@ -1,0 +1,94 @@
+{
+  "schemaVersion": 1,
+  "policy": "pin-current-with-compatibility-warnings",
+  "runtime": {
+    "pi": "0.85.1",
+    "node": "24.12.0",
+    "npm": "11.6.2"
+  },
+  "settings": "pi/settings.json",
+  "packages": [
+    "npm:pi-btw@0.4.1",
+    "npm:@quintinshaw/pi-dynamic-workflows@3.10.1",
+    "npm:@narumitw/pi-goal@0.54.4",
+    "npm:pi-web-search@1.5.0",
+    "npm:pi-web-access@0.29.0",
+    "npm:pi-observational-memory@3.0.4",
+    "npm:@juicesharp/rpiv-ask-user-question@2.9.0",
+    "npm:@cad0p/pi-napkin@0.7.3",
+    "npm:pi-rtk-optimizer@0.9.0",
+    "git:github.com/lajarre/pi-vim@e55b07c05b648f3bbccf656c2b0c6ec63f1a91d1",
+    "npm:pi-advisor-flow@0.5.5"
+  ],
+  "activeExtensions": [
+    "auto-allow.ts",
+    "caveman-mode.ts",
+    "kanagawa-theme.ts",
+    "orchestration-policy.ts",
+    "better-code/index.ts",
+    "bm25-search/index.ts",
+    "pi-rtk-optimizer/config.json"
+  ],
+  "modelRouting": {
+    "advisor": "openai-codex/gpt-6-astra:medium",
+    "executor": "openai-codex/gpt-5.6-luna:max",
+    "deepResearch": {
+      "Queries": "openai-codex/gpt-6-astra:medium",
+      "Gather": "openai-codex/gpt-5.6-luna:max",
+      "Verify": "openai-codex/gpt-5.6-luna:max",
+      "Report": "openai-codex/gpt-5.6-luna:max"
+    },
+    "jobHunting": {
+      "validation": "openai-codex/gpt-6-astra:medium",
+      "query": "openai-codex/gpt-6-astra:medium",
+      "worker": "openai-codex/gpt-5.6-luna:max",
+      "pdfAudit": "openai-codex/gpt-6-astra:medium",
+      "approval": "openai-codex/gpt-6-astra:medium"
+    }
+  },
+  "routingPolicy": {
+    "plannerAdvisor": "openai-codex/gpt-6-astra:medium",
+    "tokenHeavyExecutor": "openai-codex/gpt-5.6-luna:max",
+    "largeInputOverride": "openai-codex/gpt-5.6-luna:max",
+    "enforcement": "Workflow source must pass the model explicitly; manifest values alone are descriptive."
+  },
+  "compatibilityWarnings": [
+    {
+      "package": "pi-rtk-optimizer@0.9.0",
+      "reason": "declared peer ranges stop at Pi 0.80.x while the pinned Pi runtime is 0.85.1",
+      "policy": "warn; do not upgrade or downgrade implicitly"
+    },
+    {
+      "package": "pi-advisor-flow@0.5.5",
+      "reason": "declared peer range targets Pi 0.84.1 while the pinned Pi runtime is 0.85.1",
+      "policy": "warn; do not upgrade or downgrade implicitly"
+    }
+  ],
+  "localOnly": [
+    "provider credentials",
+    "SSH keys",
+    "browser profiles",
+    "Pi sessions and workflow journals",
+    "workflow run caches",
+    "generated node_modules"
+  ],
+  "bootstrap": {
+    "mode": "fail-closed",
+    "patchScript": "scripts/patch-pi-dynamic-workflows.sh",
+    "preflight": "scripts/pi-preflight.sh"
+  },
+  "jobHuntingWorkflow": {
+    "savedName": "job-hunting-batch",
+    "projectRelativeSource": ".pi/workflows/job-hunting-batch.js",
+    "registrationScript": "scripts/register-job-hunting-workflow.sh",
+    "maxJobs": 10,
+    "queryAgentsPerBatch": 1,
+    "workerAgentsPerJob": 1,
+    "pdfAuditAgentsPerBatch": 1,
+    "maxConcurrentWorkers": 10,
+    "maxAgentCallsPerFullBatch": 12,
+    "retryLimit": 1,
+    "resultDirectoryPattern": "documents/application/<D Month YYYY>/",
+    "humanApprovalRequired": true
+  }
+}

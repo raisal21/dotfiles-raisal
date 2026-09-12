@@ -1,0 +1,30 @@
+{
+  "lastChangelogVersion": "0.85.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.6-luna",
+  "defaultThinkingLevel": "max",
+  "theme": "kanagawa-dragon",
+  "defaultProjectTrust": "ask",
+  "packages": [
+    "npm:pi-btw@0.4.1",
+    "npm:@quintinshaw/pi-dynamic-workflows@3.10.1",
+    "npm:@narumitw/pi-goal@0.54.4",
+    "npm:pi-web-search@1.5.0",
+    "npm:pi-web-access@0.29.0",
+    "npm:pi-observational-memory@3.0.4",
+    "npm:@juicesharp/rpiv-ask-user-question@2.9.0",
+    "npm:@cad0p/pi-napkin@0.7.3",
+    "npm:pi-rtk-optimizer@0.9.0",
+    "git:github.com/lajarre/pi-vim@e55b07c05b648f3bbccf656c2b0c6ec63f1a91d1",
+    "npm:pi-advisor-flow@0.5.5"
+  ],
+  "extensions": [
+    "extensions/auto-allow.ts",
+    "extensions/caveman-mode.ts",
+    "extensions/kanagawa-theme.ts",
+    "extensions/orchestration-policy.ts",
+    "extensions/better-code/index.ts",
+    "extensions/bm25-search/index.ts"
+  ],
+  "hideThinkingBlock": true
+}

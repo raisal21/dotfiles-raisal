@@ -1,0 +1,18 @@
+{
+  "name": "bm25-search",
+  "version": "1.0.0",
+  "description": "BM25 search extension for pi coding agent",
+  "type": "module",
+  "pi": {
+    "extensions": ["./index.ts"]
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fast-bm25": "0.0.5"
+  }
+}
