@@ -1,6 +1,43 @@
 local keymap = vim.keymap -- for conciseness
 local document_highlight_group = vim.api.nvim_create_augroup("UserLspDocumentHighlight", { clear = true })
 
+local function fix_missing_semicolon()
+  local bufnr = vim.api.nvim_get_current_buf()
+  local line = vim.api.nvim_win_get_cursor(0)[1] - 1
+  local diagnostics = vim.diagnostic.get(bufnr, { lnum = line })
+  local semicolon_diagnostics = vim.tbl_filter(function(diagnostic)
+    return diagnostic.code == "CS1002"
+  end, diagnostics)
+
+  if #semicolon_diagnostics == 0 then
+    return false
+  end
+
+  if #semicolon_diagnostics > 1 then
+    vim.notify("C#: multiple CS1002 diagnostics on this line; refusing to guess", vim.log.levels.WARN)
+    return true
+  end
+
+  local diagnostic = semicolon_diagnostics[1]
+  local diagnostic_line = diagnostic.lnum
+  local col = diagnostic.col
+  local line_text = type(diagnostic_line) == "number"
+      and vim.api.nvim_buf_get_lines(bufnr, diagnostic_line, diagnostic_line + 1, false)[1]
+    or nil
+
+  if type(col) ~= "number" or not line_text or col < 0 or col > #line_text then
+    vim.notify("C#: invalid CS1002 diagnostic position; refusing to edit", vim.log.levels.WARN)
+    return true
+  end
+
+  if line_text:sub(col + 1, col + 1) == ";" then
+    return true
+  end
+
+  vim.api.nvim_buf_set_text(bufnr, diagnostic_line, col, diagnostic_line, col, { ";" })
+  return true
+end
+
 vim.api.nvim_create_autocmd("LspAttach", {
   group = vim.api.nvim_create_augroup("UserLspConfig", { clear = true }),
   callback = function(ev)
@@ -99,6 +136,24 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
       opts.desc = "C#: workspace symbols"
       keymap.set("n", "<leader>tw", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", opts)
+
+      opts.desc = "C#: fix current diagnostic"
+      keymap.set("n", "<leader>cq", function()
+        if fix_missing_semicolon() then
+          return
+        end
+        vim.lsp.buf.code_action({
+          context = { only = { "quickfix" } },
+          apply = true,
+        })
+      end, opts)
+
+      opts.desc = "C#: simplifications/refactors"
+      keymap.set("n", "<leader>cs", function()
+        vim.lsp.buf.code_action({
+          context = { only = { "refactor" } },
+        })
+      end, opts)
     end
   end,
 })
