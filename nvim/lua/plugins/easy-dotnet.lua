@@ -33,8 +33,8 @@ return {
   opts = {
     picker = "telescope",
     lsp = {
-      -- roslyn.nvim remains the sole owner of the C# language server.
-      enabled = false,
+      -- easy-dotnet owns the C# language server and its .NET integrations.
+      enabled = true,
     },
     projx_lsp = {
       enabled = true,

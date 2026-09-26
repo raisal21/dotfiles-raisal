@@ -1,5 +1,5 @@
 {
-  "executor": "openai-codex/gpt-5.6-luna",
+  "executor": "openai-codex/gpt-6-luna",
   "advisor": "openai-codex/gpt-6-astra",
   "executorEffort": "max",
   "advisorEffort": "medium",
@@ -26,5 +26,7 @@
   "advisorUntrackedContent": false,
   "advisorOutcomeLogging": false,
   "showUsageDetails": true,
-  "showUsageFooter": false
+  "showUsageFooter": false,
+  "advisorCollapseResponses": false,
+  "advisorToolPolicies": {}
 }

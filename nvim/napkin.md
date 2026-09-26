@@ -174,6 +174,8 @@ end
 
 **Caveat implement:** Roslyn di Mason = manual setup config + nuget restore. Detail di-resolve pas execution.
 
+**Superseded 2026-09-17:** `easy-dotnet.nvim` sekarang menjadi pemilik tunggal primary Roslyn LSP. `roslyn.nvim` dihapus dari plugin spec, settings inlay dipindahkan ke `lsp/easy_dotnet.lua`, dan Mason tidak lagi memastikan package `roslyn`. Core server tetap Roslyn resmi; easy-dotnet dipilih karena menambahkan Roslynator, easy-dotnet analyzer, project/solution lifecycle, dan Razor integration. `easy_dotnet_projx` tetap aktif sebagai auxiliary client.
+
 ---
 
 ### Decision 12 — Obsidian workspace path = env var via zshrc

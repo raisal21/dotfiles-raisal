@@ -80,6 +80,17 @@ backend secara bergantian.
 - Nightly health reported no configuration error. Remaining findings are a terminal graphics error under tmux and a `vim.F.if_nil` deprecation warning from existing dependencies.
 - Rollback command: `/home/raisal/.local/opt/nvim-0.12.5/bin/nvim`; legacy `/opt/nvim-linux-x86_64/bin/nvim` remains available at `v0.12.1`.
 
+## 2026-09-17 — Roslyn ownership consolidation
+
+- [x] Make `easy-dotnet.nvim` the sole primary C# LSP owner.
+- [x] Port the existing inlay-hint settings to `lsp/easy_dotnet.lua`.
+- [x] Remove the `roslyn.nvim` plugin spec and Mason auto-install entry.
+- [x] Keep `easy_dotnet_projx` as the auxiliary `.csproj` LSP.
+- [x] Headless smoke test loaded `easy_dotnet` for the `csharp-playground` project.
+- [x] Confirmed the launched command uses `--roslynator --easy-dotnet-analyzer` and the migrated inlay settings are present.
+- [x] Confirmed diagnostics include compiler, CA, and Roslynator diagnostics; no primary `roslyn` client was active.
+- [x] `:checkhealth easy-dotnet` completed without a Neovim error; interactive validation remains for multi-project solutions, source-generated files, Razor, and branch switching.
+
 ## Phase 2: Native Autoread Migration
 
 - [x] Uji native watcher pada file bersih yang diubah oleh shell.

@@ -21,7 +21,6 @@ return {
       ensure_installed = {
         "prettier",
         "stylua",
-        "roslyn", -- C#/.NET LSP (Microsoft.CodeAnalysis.LanguageServer)
       },
     },
     dependencies = { "williamboman/mason.nvim" },

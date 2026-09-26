@@ -9,3 +9,10 @@ hunk/
 nvim/cheatsheet.md
 wslu/
 pi/**/node_modules/
+
+# Completed execution notes contain machine-local paths.
+/plans/README.md
+/plans/001-csharp-compiler-feedback.md
+
+# Claude Code creates these per-browser hosts with machine-local executable paths.
+**/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json

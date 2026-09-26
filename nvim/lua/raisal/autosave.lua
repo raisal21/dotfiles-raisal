@@ -32,8 +32,13 @@ local function eligible(buf)
     and vim.fn.isdirectory(name) == 0
 end
 
+local function in_insert_mode()
+  local mode = vim.api.nvim_get_mode().mode
+  return mode:sub(1, 1) == "i" or mode:sub(1, 1) == "R"
+end
+
 local function save(buf)
-  if not eligible(buf) then
+  if in_insert_mode() or not eligible(buf) then
     return false
   end
 
@@ -59,7 +64,9 @@ function M.schedule(buf)
     end
 
     pending[buf] = nil
-    save(buf)
+    if not in_insert_mode() then
+      save(buf)
+    end
   end, delay_ms)
   pending[buf] = { timer = timer, token = token }
 end
@@ -70,12 +77,24 @@ function M.flush(buf)
 end
 
 function M.setup()
-  vim.api.nvim_create_autocmd({ "TextChanged", "TextChangedI" }, {
+  -- Never start the idle-save timer while typing. Formatting on save can
+  -- rewrite whitespace, so wait until Normal mode before scheduling it.
+  vim.api.nvim_create_autocmd("TextChanged", {
     group = group,
     callback = function(args)
       M.schedule(args.buf)
     end,
-    desc = "Schedule autosave after editing settles",
+    desc = "Schedule autosave after Normal-mode editing settles",
+  })
+
+  vim.api.nvim_create_autocmd("InsertLeave", {
+    group = group,
+    callback = function(args)
+      if eligible(args.buf) then
+        M.schedule(args.buf)
+      end
+    end,
+    desc = "Schedule autosave after leaving Insert mode",
   })
 
   vim.api.nvim_create_autocmd({ "BufLeave", "FocusLost" }, {

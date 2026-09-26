@@ -26,5 +26,5 @@
     "extensions/better-code/index.ts",
     "extensions/bm25-search/index.ts"
   ],
-  "hideThinkingBlock": true
+  "hideThinkingBlock": false
 }
