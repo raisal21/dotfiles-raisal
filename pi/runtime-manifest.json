@@ -27,6 +27,7 @@
     "orchestration-policy.ts",
     "better-code/index.ts",
     "bm25-search/index.ts",
+    "psikotes/index.ts",
     "pi-rtk-optimizer/config.json"
   ],
   "modelRouting": {
@@ -37,6 +38,10 @@
       "Gather": "openai-codex/gpt-5.6-luna:max",
       "Verify": "openai-codex/gpt-5.6-luna:max",
       "Report": "openai-codex/gpt-5.6-luna:max"
+    },
+    "psikotes": {
+      "generator": "openai-codex/gpt-5.6-luna:max",
+      "blindSolver": "openai-codex/gpt-6-sol:xhigh"
     },
     "jobHunting": {
       "validation": "openai-codex/gpt-6-astra:medium",

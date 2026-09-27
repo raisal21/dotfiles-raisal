@@ -8,6 +8,7 @@ The files in this directory are the versioned, non-secret Pi runtime contract us
 - `runtime-manifest.json` — Pi/Node/npm versions, package refs, phase-level model routing, compatibility warnings, and local-only state.
 - `advisor.json` — Advisor routing profile; Astra medium plans/reviews and Luna max executes token-heavy work.
 - `extensions/` — versioned active local extensions and dependency manifests.
+- `extensions/psikotes/` — `bank_*` tools and file guards for the job-hunting question banks. Guard tests: `node --test pi/extensions/psikotes/guards.test.ts` (also run by preflight).
 
 ## Bootstrap
 

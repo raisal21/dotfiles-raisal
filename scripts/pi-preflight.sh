@@ -54,6 +54,8 @@ expected = {
     ("modelRouting", "jobHunting", "worker"): "openai-codex/gpt-5.6-luna:max",
     ("modelRouting", "jobHunting", "pdfAudit"): "openai-codex/gpt-6-astra:medium",
     ("modelRouting", "jobHunting", "approval"): "openai-codex/gpt-6-astra:medium",
+    ("modelRouting", "psikotes", "generator"): "openai-codex/gpt-5.6-luna:max",
+    ("modelRouting", "psikotes", "blindSolver"): "openai-codex/gpt-6-sol:xhigh",
     ("routingPolicy", "plannerAdvisor"): "openai-codex/gpt-6-astra:medium",
     ("routingPolicy", "tokenHeavyExecutor"): "openai-codex/gpt-5.6-luna:max",
     ("routingPolicy", "largeInputOverride"): "openai-codex/gpt-5.6-luna:max",
@@ -215,6 +217,21 @@ elif [[ -d "${DOTFILES}/pi/extensions/bm25-search/node_modules/fast-bm25" ]]; th
   ok "BM25 extension dependencies"
 fi
 
+PSIKOTES_EXTENSION="${DOTFILES}/pi/extensions/psikotes"
+if [[ -f "${PSIKOTES_EXTENSION}/index.ts" ]]; then
+  if node --test "${PSIKOTES_EXTENSION}/guards.test.ts" >/dev/null 2>&1; then
+    ok "psikotes extension guards"
+  else
+    fail "psikotes extension guard tests fail: node --test ${PSIKOTES_EXTENSION}/guards.test.ts"
+  fi
+fi
+
+if command -v uv >/dev/null 2>&1; then
+  ok "uv available"
+else
+  fail "uv unavailable; the psikotes bank tools need it"
+fi
+
 if command -v latexmk >/dev/null 2>&1; then
   ok "latexmk available"
 else
@@ -226,6 +243,12 @@ if [[ -n "${PROJECT_DIR}" ]]; then
     ok "job-hunting reproducibility contract found"
   else
     warn "job-hunting project contract not found at ${PROJECT_DIR}"
+  fi
+
+  if [[ -f "${PROJECT_DIR}/documents/research/psychometric-tests/question-tools/uv.lock" ]]; then
+    ok "psikotes question-tools lockfile"
+  else
+    fail "psikotes question-tools lockfile missing"
   fi
 
   if [[ -f "${PROJECT_DIR}/.pi/workflows/job-hunting-batch.js" ]]; then

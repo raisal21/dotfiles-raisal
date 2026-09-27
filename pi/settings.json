@@ -24,7 +24,8 @@
     "extensions/kanagawa-theme.ts",
     "extensions/orchestration-policy.ts",
     "extensions/better-code/index.ts",
-    "extensions/bm25-search/index.ts"
+    "extensions/bm25-search/index.ts",
+    "extensions/psikotes/index.ts"
   ],
   "hideThinkingBlock": false
 }
