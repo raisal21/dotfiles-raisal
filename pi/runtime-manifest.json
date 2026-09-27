@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "policy": "pin-current-with-compatibility-warnings",
   "runtime": {
-    "pi": "0.85.1",
+    "pi": "0.87.1",
     "node": "24.12.0",
     "npm": "11.6.2"
   },
@@ -55,12 +55,12 @@
   "compatibilityWarnings": [
     {
       "package": "pi-rtk-optimizer@0.9.0",
-      "reason": "declared peer ranges stop at Pi 0.80.x while the pinned Pi runtime is 0.85.1",
+      "reason": "declared peer ranges stop at Pi 0.80.x while the pinned Pi runtime is 0.87.1",
       "policy": "warn; do not upgrade or downgrade implicitly"
     },
     {
       "package": "pi-advisor-flow@0.5.5",
-      "reason": "declared peer range targets Pi 0.84.1 while the pinned Pi runtime is 0.85.1",
+      "reason": "declared peer range targets Pi 0.84.1 while the pinned Pi runtime is 0.87.1",
       "policy": "warn; do not upgrade or downgrade implicitly"
     }
   ],
