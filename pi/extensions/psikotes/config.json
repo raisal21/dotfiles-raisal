@@ -1,3 +1,12 @@
 {
-  "toolsDir": "documents/research/psychometric-tests/question-tools"
+  "toolsDir": "documents/research/psychometric-tests/question-tools",
+  "browser": {
+    "session": {
+      "type": "chrome-app",
+      "path": "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe",
+      "profileDir": "psikotes\\chrome-profile",
+      "windowSize": "1100,860"
+    },
+    "review": { "type": "default" }
+  }
 }

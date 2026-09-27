@@ -4,22 +4,41 @@
 // that contains the question-tools project.
 import { existsSync, readFileSync } from "node:fs"
 import { join } from "node:path"
-import { getAgentDir, type ExtensionAPI, type ExtensionContext } from "@earendil-works/pi-coding-agent"
+import {
+  getAgentDir,
+  type ExtensionAPI,
+  type ExtensionCommandContext,
+  type ExtensionContext,
+} from "@earendil-works/pi-coding-agent"
 import { Type } from "typebox"
 import { checkBash, checkFileWrite, findRepo, type Decision, type Repo } from "./guards.ts"
+import { openBrowser, parseSessionArgs, startServer, type LaunchConfig, type Server } from "./launch.ts"
 
 type Config = {
   toolsDir: string
+  browser: LaunchConfig
 }
 
-const DEFAULT_CONFIG: Config = { toolsDir: "documents/research/psychometric-tests/question-tools" }
+const DEFAULT_CONFIG: Config = {
+  toolsDir: "documents/research/psychometric-tests/question-tools",
+  browser: {
+    session: {
+      type: "chrome-app",
+      path: "/mnt/c/Program Files/Google/Chrome/Application/chrome.exe",
+      profileDir: "psikotes\\chrome-profile",
+      windowSize: "1100,860",
+    },
+    review: { type: "default" },
+  },
+}
 const MAX_OUTPUT = 40_000
 const BANK_TIMEOUT_MS = 300_000
 
 function loadConfig(): Config {
   try {
     const raw = readFileSync(join(getAgentDir(), "extensions", "psikotes", "config.json"), "utf8")
-    return { ...DEFAULT_CONFIG, ...(JSON.parse(raw) as Partial<Config>) }
+    const loaded = JSON.parse(raw) as Partial<Config>
+    return { ...DEFAULT_CONFIG, ...loaded, browser: { ...DEFAULT_CONFIG.browser, ...loaded.browser } }
   } catch {
     return DEFAULT_CONFIG
   }
@@ -37,6 +56,121 @@ function truncate(text: string): string {
 }
 
 export default function (pi: ExtensionAPI) {
+  // One local server at a time: a practice session or a review page.
+  let active: { kind: string; server: Server } | undefined
+
+  function stopActive() {
+    if (active && active.server.child.exitCode === null) active.server.child.kill("SIGINT")
+    active = undefined
+  }
+
+  pi.on("session_shutdown", () => stopActive())
+
+  async function launch(
+    ctx: ExtensionCommandContext,
+    kind: "latihan" | "review",
+    args: string[],
+    after: (finished: Record<string, unknown> | undefined) => Promise<void>,
+  ) {
+    const repo = repoFor(ctx.cwd)
+    if (!repo) {
+      ctx.ui.notify(`Perintah ini hanya bekerja di repo yang punya ${config.toolsDir}.`, "warning")
+      return
+    }
+    if (active) {
+      ctx.ui.notify(`Masih ada ${active.kind} yang berjalan. Tutup dulu dari browser.`, "warning")
+      return
+    }
+    const browser = kind === "latihan" ? config.browser.session : config.browser.review
+    const server = startServer(repo.tools, repo.root, args, (ready) => {
+      void openBrowser(String(ready.url), browser).then((where) => {
+        ctx.ui.setStatus("psikotes", `${kind} berjalan`)
+        ctx.ui.notify(`${kind === "latihan" ? "Sesi" : "Halaman review"} dibuka di ${where}: ${ready.url}`, "info")
+      })
+    })
+    active = { kind, server }
+    const result = await server.done
+    active = undefined
+    ctx.ui.setStatus("psikotes", undefined)
+    if (result.code !== 0) {
+      ctx.ui.notify(`bank ${args[0]} berhenti dengan kode ${result.code}: ${result.stderr.trim().split("\n").slice(-3).join(" ")}`, "error")
+      return
+    }
+    await after(result.finished)
+  }
+
+  pi.registerCommand("latihan", {
+    description: "Sesi latihan psikotes di browser: /latihan <subtes> [ujian|latihan] [jumlah] [--draft]",
+    handler: async (raw, ctx) => {
+      const { args, error } = parseSessionArgs(raw)
+      if (error) {
+        ctx.ui.notify(error, "warning")
+        return
+      }
+      void launch(ctx, "latihan", args, async (finished) => {
+        if (!finished || finished.event === "discarded") {
+          ctx.ui.notify("Sesi ditutup sebelum dimulai; tidak ada yang disimpan.", "info")
+          return
+        }
+        const score = finished.score as { raw: number; max: number; not_reached: number } | undefined
+        const line = score
+          ? `${finished.subtest_name}: ${score.raw} dari ${score.max} poin, ${score.not_reached} tidak sempat.`
+          : `Sesi ${finished.id} selesai.`
+        ctx.ui.notify(line, "info")
+        if (ctx.hasUI && (await ctx.ui.confirm("Debrief sekarang?", line))) {
+          pi.sendUserMessage(`/debrief ${finished.id}`, { expandPromptTemplates: true })
+        }
+      })
+    },
+  })
+
+  pi.registerCommand("review-soal", {
+    description: "Tinjau soal checked di browser: /review-soal [subtes ...]",
+    handler: async (raw, ctx) => {
+      const subtests = raw.trim().split(/\s+/).filter(Boolean)
+      void launch(ctx, "review", ["review", ...subtests], async (finished) => {
+        const decisions = (finished?.decisions as { id: string; status: string }[] | undefined) ?? []
+        ctx.ui.notify(
+          decisions.length ? `${decisions.length} keputusan: ${decisions.map((d) => `${d.id} ${d.status}`).join(", ")}` : "Tidak ada keputusan.",
+          "info",
+        )
+      })
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_session_result",
+    label: "Bank session result",
+    description:
+      "Summary of a practice session: score, per-mechanism counts, and every mistake with the chosen distractor, the user's reason, and the key. Use for debriefs; `latest` by default.",
+    parameters: Type.Object({
+      session: Type.Optional(Type.String({ description: "Session ID or latest" })),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      return runBank(ctx, ["session-result", params.session ?? "latest"], signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_session_grade",
+    label: "Bank session grade",
+    description:
+      "Record the score for an answer that is pending grading (GE free text). Propose the score to the user first; the tool asks the user to confirm before writing.",
+    parameters: Type.Object({
+      session: Type.String({ description: "Session ID" }),
+      position: Type.Integer({ minimum: 1 }),
+      score: Type.Integer({ minimum: 0, maximum: 2 }),
+      reason: Type.String({ description: "Why this score, in one sentence" }),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      const question = `Catat nilai ${params.score} untuk soal ${params.position} sesi ${params.session}?`
+      if (!ctx.hasUI || !(await ctx.ui.confirm(question, params.reason))) {
+        throw new Error("Nilai tidak dicatat: user tidak menyetujui atau tidak ada UI.")
+      }
+      return runBank(ctx, ["session-grade", params.session, String(params.position), String(params.score)], signal)
+    },
+  })
+
   async function runBank(ctx: ExtensionContext, args: string[], signal: AbortSignal | undefined) {
     const repo = repoFor(ctx.cwd)
     if (!repo) {
