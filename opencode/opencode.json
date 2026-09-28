@@ -2,200 +2,208 @@
   "$schema": "https://opencode.ai/config.json",
   "model": "openai/gpt-6-astra",
   "default_agent": "explore",
-  "permission": {
-    "edit": "ask",
-    "write": "ask",
-    "bash": {
-      "*": "ask",
-      "ls": "allow", "ls *": "allow",
-      "eza": "allow", "eza *": "allow",
-      "tree": "allow", "tree *": "allow",
-      "cat *": "allow",
-      "bat *": "allow",
-      "batcat *": "allow",
-      "head *": "allow",
-      "tail *": "allow",
-      "wc *": "allow",
-      "grep *": "allow",
-      "rg *": "allow",
-      "find *": "allow",
-      "fd *": "allow",
-      "which *": "allow",
-      "pwd": "allow",
-      "stat *": "allow",
-      "file *": "allow",
-      "du *": "allow",
-      "df": "allow", "df *": "allow",
-      "jq *": "allow",
-      "ps": "allow", "ps *": "allow",
-      "lsof *": "allow",
-      "ss": "allow", "ss *": "allow",
-      "netstat *": "allow",
-      "ip *": "allow",
-      "ifconfig": "allow", "ifconfig *": "allow",
-      "free": "allow", "free *": "allow",
-      "vmstat *": "allow",
-      "nproc": "allow",
-      "lscpu": "allow",
-      "lsblk": "allow", "lsblk *": "allow",
-      "uptime": "allow",
-      "whoami": "allow",
-      "id": "allow", "id *": "allow",
-      "hostname": "allow", "hostname *": "allow",
-      "uname": "allow", "uname *": "allow",
-      "date": "allow", "date *": "allow",
-      "env": "allow",
-      "printenv": "allow", "printenv *": "allow",
-      "realpath *": "allow",
-      "readlink *": "allow",
-      "basename *": "allow",
-      "dirname *": "allow",
-      "diff *": "allow",
-      "cmp *": "allow",
-      "sort *": "allow",
-      "uniq *": "allow",
-      "cut *": "allow",
-      "tr *": "allow",
-      "column *": "allow",
-      "comm *": "allow",
-      "xxd *": "allow",
-      "od *": "allow",
-      "hexdump *": "allow",
-      "strings *": "allow",
-      "ag *": "allow",
-      "ack *": "allow",
-      "whereis *": "allow",
-      "type *": "allow",
-      "ldd *": "allow",
-      "nm *": "allow",
-      "objdump *": "allow",
-      "cal": "allow", "cal *": "allow",
-      "git status": "allow", "git status *": "allow",
-      "git diff": "allow", "git diff *": "allow",
-      "git log": "allow", "git log *": "allow",
-      "git show *": "allow",
-      "git branch": "allow", "git branch *": "allow",
-      "git remote *": "allow",
-      "git stash list *": "allow",
-      "git tag *": "allow",
-      "git describe *": "allow",
-      "git rev-parse *": "allow",
-      "git blame *": "allow",
-      "git ls-files *": "allow",
-      "git reflog *": "allow",
-      "git shortlog *": "allow",
-      "git cat-file *": "allow",
-      "git ls-tree *": "allow",
-      "git grep *": "allow",
-      "git rev-list *": "allow",
-      "git for-each-ref *": "allow",
-      "git name-rev *": "allow",
-      "git diff-tree *": "allow",
-      "python3 -m json.tool *": "allow",
-      "python -m json.tool *": "allow",
-      "python3 -m py_compile *": "allow",
-      "python -m py_compile *": "allow",
-      "python3 --version": "allow",
-      "python3 -V": "allow",
-      "python --version": "allow",
-      "python -V": "allow",
-      "find * -delete*": "deny",
-      "find * -exec *": "deny",
-      "find * -execdir *": "deny",
-      "find * -ok *": "deny",
-      "find * -okdir *": "deny",
-      "fd * -x *": "deny",
-      "fd * -X *": "deny",
-      "fd * --exec *": "deny",
-      "fd * --exec-batch *": "deny",
-      "* > *": "deny",
-      "* >> *": "deny",
-      "* | tee *": "deny",
-      "tee *": "deny"
-    }
-  },
-  "agent": {
+  "permissions": [
+    { "action": "edit", "resource": "*", "effect": "ask" },
+    { "action": "shell", "resource": "*", "effect": "ask" },
+    { "action": "shell", "resource": "ls", "effect": "allow" },
+    { "action": "shell", "resource": "ls *", "effect": "allow" },
+    { "action": "shell", "resource": "eza", "effect": "allow" },
+    { "action": "shell", "resource": "eza *", "effect": "allow" },
+    { "action": "shell", "resource": "tree", "effect": "allow" },
+    { "action": "shell", "resource": "tree *", "effect": "allow" },
+    { "action": "shell", "resource": "cat *", "effect": "allow" },
+    { "action": "shell", "resource": "bat *", "effect": "allow" },
+    { "action": "shell", "resource": "batcat *", "effect": "allow" },
+    { "action": "shell", "resource": "head *", "effect": "allow" },
+    { "action": "shell", "resource": "tail *", "effect": "allow" },
+    { "action": "shell", "resource": "wc *", "effect": "allow" },
+    { "action": "shell", "resource": "grep *", "effect": "allow" },
+    { "action": "shell", "resource": "rg *", "effect": "allow" },
+    { "action": "shell", "resource": "find *", "effect": "allow" },
+    { "action": "shell", "resource": "fd *", "effect": "allow" },
+    { "action": "shell", "resource": "which *", "effect": "allow" },
+    { "action": "shell", "resource": "pwd", "effect": "allow" },
+    { "action": "shell", "resource": "stat *", "effect": "allow" },
+    { "action": "shell", "resource": "file *", "effect": "allow" },
+    { "action": "shell", "resource": "du *", "effect": "allow" },
+    { "action": "shell", "resource": "df", "effect": "allow" },
+    { "action": "shell", "resource": "df *", "effect": "allow" },
+    { "action": "shell", "resource": "jq *", "effect": "allow" },
+    { "action": "shell", "resource": "ps", "effect": "allow" },
+    { "action": "shell", "resource": "ps *", "effect": "allow" },
+    { "action": "shell", "resource": "lsof *", "effect": "allow" },
+    { "action": "shell", "resource": "ss", "effect": "allow" },
+    { "action": "shell", "resource": "ss *", "effect": "allow" },
+    { "action": "shell", "resource": "netstat *", "effect": "allow" },
+    { "action": "shell", "resource": "ip *", "effect": "allow" },
+    { "action": "shell", "resource": "ifconfig", "effect": "allow" },
+    { "action": "shell", "resource": "ifconfig *", "effect": "allow" },
+    { "action": "shell", "resource": "free", "effect": "allow" },
+    { "action": "shell", "resource": "free *", "effect": "allow" },
+    { "action": "shell", "resource": "vmstat *", "effect": "allow" },
+    { "action": "shell", "resource": "nproc", "effect": "allow" },
+    { "action": "shell", "resource": "lscpu", "effect": "allow" },
+    { "action": "shell", "resource": "lsblk", "effect": "allow" },
+    { "action": "shell", "resource": "lsblk *", "effect": "allow" },
+    { "action": "shell", "resource": "uptime", "effect": "allow" },
+    { "action": "shell", "resource": "whoami", "effect": "allow" },
+    { "action": "shell", "resource": "id", "effect": "allow" },
+    { "action": "shell", "resource": "id *", "effect": "allow" },
+    { "action": "shell", "resource": "hostname", "effect": "allow" },
+    { "action": "shell", "resource": "hostname *", "effect": "allow" },
+    { "action": "shell", "resource": "uname", "effect": "allow" },
+    { "action": "shell", "resource": "uname *", "effect": "allow" },
+    { "action": "shell", "resource": "date", "effect": "allow" },
+    { "action": "shell", "resource": "date *", "effect": "allow" },
+    { "action": "shell", "resource": "env", "effect": "allow" },
+    { "action": "shell", "resource": "printenv", "effect": "allow" },
+    { "action": "shell", "resource": "printenv *", "effect": "allow" },
+    { "action": "shell", "resource": "realpath *", "effect": "allow" },
+    { "action": "shell", "resource": "readlink *", "effect": "allow" },
+    { "action": "shell", "resource": "basename *", "effect": "allow" },
+    { "action": "shell", "resource": "dirname *", "effect": "allow" },
+    { "action": "shell", "resource": "diff *", "effect": "allow" },
+    { "action": "shell", "resource": "cmp *", "effect": "allow" },
+    { "action": "shell", "resource": "sort *", "effect": "allow" },
+    { "action": "shell", "resource": "uniq *", "effect": "allow" },
+    { "action": "shell", "resource": "cut *", "effect": "allow" },
+    { "action": "shell", "resource": "tr *", "effect": "allow" },
+    { "action": "shell", "resource": "column *", "effect": "allow" },
+    { "action": "shell", "resource": "comm *", "effect": "allow" },
+    { "action": "shell", "resource": "xxd *", "effect": "allow" },
+    { "action": "shell", "resource": "od *", "effect": "allow" },
+    { "action": "shell", "resource": "hexdump *", "effect": "allow" },
+    { "action": "shell", "resource": "strings *", "effect": "allow" },
+    { "action": "shell", "resource": "ag *", "effect": "allow" },
+    { "action": "shell", "resource": "ack *", "effect": "allow" },
+    { "action": "shell", "resource": "whereis *", "effect": "allow" },
+    { "action": "shell", "resource": "type *", "effect": "allow" },
+    { "action": "shell", "resource": "ldd *", "effect": "allow" },
+    { "action": "shell", "resource": "nm *", "effect": "allow" },
+    { "action": "shell", "resource": "objdump *", "effect": "allow" },
+    { "action": "shell", "resource": "cal", "effect": "allow" },
+    { "action": "shell", "resource": "cal *", "effect": "allow" },
+    { "action": "shell", "resource": "git status", "effect": "allow" },
+    { "action": "shell", "resource": "git status *", "effect": "allow" },
+    { "action": "shell", "resource": "git diff", "effect": "allow" },
+    { "action": "shell", "resource": "git diff *", "effect": "allow" },
+    { "action": "shell", "resource": "git log", "effect": "allow" },
+    { "action": "shell", "resource": "git log *", "effect": "allow" },
+    { "action": "shell", "resource": "git show *", "effect": "allow" },
+    { "action": "shell", "resource": "git branch", "effect": "allow" },
+    { "action": "shell", "resource": "git branch *", "effect": "allow" },
+    { "action": "shell", "resource": "git remote *", "effect": "allow" },
+    { "action": "shell", "resource": "git stash list *", "effect": "allow" },
+    { "action": "shell", "resource": "git tag *", "effect": "allow" },
+    { "action": "shell", "resource": "git describe *", "effect": "allow" },
+    { "action": "shell", "resource": "git rev-parse *", "effect": "allow" },
+    { "action": "shell", "resource": "git blame *", "effect": "allow" },
+    { "action": "shell", "resource": "git ls-files *", "effect": "allow" },
+    { "action": "shell", "resource": "git reflog *", "effect": "allow" },
+    { "action": "shell", "resource": "git shortlog *", "effect": "allow" },
+    { "action": "shell", "resource": "git cat-file *", "effect": "allow" },
+    { "action": "shell", "resource": "git ls-tree *", "effect": "allow" },
+    { "action": "shell", "resource": "git grep *", "effect": "allow" },
+    { "action": "shell", "resource": "git rev-list *", "effect": "allow" },
+    { "action": "shell", "resource": "git for-each-ref *", "effect": "allow" },
+    { "action": "shell", "resource": "git name-rev *", "effect": "allow" },
+    { "action": "shell", "resource": "git diff-tree *", "effect": "allow" },
+    { "action": "shell", "resource": "python3 -m json.tool *", "effect": "allow" },
+    { "action": "shell", "resource": "python -m json.tool *", "effect": "allow" },
+    { "action": "shell", "resource": "python3 -m py_compile *", "effect": "allow" },
+    { "action": "shell", "resource": "python -m py_compile *", "effect": "allow" },
+    { "action": "shell", "resource": "python3 --version", "effect": "allow" },
+    { "action": "shell", "resource": "python3 -V", "effect": "allow" },
+    { "action": "shell", "resource": "python --version", "effect": "allow" },
+    { "action": "shell", "resource": "python -V", "effect": "allow" },
+    { "action": "shell", "resource": "find * -delete*", "effect": "deny" },
+    { "action": "shell", "resource": "find * -exec *", "effect": "deny" },
+    { "action": "shell", "resource": "find * -execdir *", "effect": "deny" },
+    { "action": "shell", "resource": "find * -ok *", "effect": "deny" },
+    { "action": "shell", "resource": "find * -okdir *", "effect": "deny" },
+    { "action": "shell", "resource": "fd * -x *", "effect": "deny" },
+    { "action": "shell", "resource": "fd * -X *", "effect": "deny" },
+    { "action": "shell", "resource": "fd * --exec *", "effect": "deny" },
+    { "action": "shell", "resource": "fd * --exec-batch *", "effect": "deny" },
+    { "action": "shell", "resource": "* > *", "effect": "deny" },
+    { "action": "shell", "resource": "* >> *", "effect": "deny" },
+    { "action": "shell", "resource": "* | tee *", "effect": "deny" },
+    { "action": "shell", "resource": "tee *", "effect": "deny" }
+  ],
+  "agents": {
     "build": {
-      "model": "openai/gpt-5.6-luna",
-      "variant": "max"
+      "model": "openai/gpt-5.6-luna#max"
     },
     "plan": {
-      "model": "openai/gpt-6-astra",
-      "variant": "medium"
+      "model": "openai/gpt-6-astra#medium"
     },
     "general": {
       "mode": "subagent",
-      "model": "openai/gpt-5.6-luna",
-      "variant": "max"
+      "model": "openai/gpt-5.6-luna#max"
     },
     "explore": {
       "mode": "all",
-      "model": "openai/gpt-5.6-luna",
-      "variant": "max",
-      "tools": {
-        "skill": true
-      },
-      "permission": {
-        "bash": "deny",
-        "edit": "deny"
-      }
+      "model": "openai/gpt-5.6-luna#max",
+      "permissions": [
+        { "action": "shell", "resource": "*", "effect": "deny" },
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "skill", "resource": "*", "effect": "allow" }
+      ]
     },
     "research": {
       "description": "Research agent: fetches official docs, API references, and best practices from the web. Read-only, web-heavy, no file modifications.",
       "mode": "subagent",
-      "prompt": "{file:/home/raisal/.config/opencode/prompts/research.md}",
-      "permission": {
-        "edit": "deny",
-        "write": "deny",
-        "bash": "deny"
-      }
+      "system": "{file:/home/raisal/.config/opencode/prompts/research.md}",
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "shell", "resource": "*", "effect": "deny" }
+      ]
     },
     "brainstorm": {
       "description": "Ideas partner: explore possibilities, tradeoffs, alternatives. Discuss articles, designs, and approaches. Read-only — never writes code or implementation plans.",
       "mode": "primary",
-      "model": "openai/gpt-6-astra",
-      "variant": "medium",
-      "prompt": "{file:/home/raisal/.config/opencode/prompts/brainstorm.md}",
-      "permission": {
-        "edit": "deny",
-        "write": "deny",
-        "bash": "deny"
-      }
+      "model": "openai/gpt-6-astra#medium",
+      "system": "{file:/home/raisal/.config/opencode/prompts/brainstorm.md}",
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "shell", "resource": "*", "effect": "deny" }
+      ]
     }
   },
-  "command": {
+  "commands": {
     "react-doctor": {
       "description": "Run React Doctor analysis (lint, dead code, a11y, bundle, architecture)",
       "template": "Run react-doctor on this project: execute `npx -y react-doctor@latest . --verbose` and report the health score (0-100). List any critical issues found — especially security, performance, and correctness problems. If this is after code changes, use `--diff` flag instead to check for regressions."
     }
   },
   "mcp": {
-    "bm25": {
-      "type": "local",
-      "command": ["node", "/home/raisal/.config/opencode/bm25-mcp/server.mjs"],
-      "enabled": true
-    },
-    "context7": {
-      "type": "local",
-      "command": ["npx", "-y", "@upstash/context7-mcp"],
-      "env": {
-        "CTX7_API_KEY": "${env:CONTEXT7_API_KEY}"
+    "servers": {
+      "bm25": {
+        "type": "local",
+        "command": ["node", "/home/raisal/.config/opencode/bm25-mcp/server.mjs"],
+        "disabled": false
       },
-      "enabled": true
-    },
-    "microsoft-learn": {
-      "type": "http",
-      "url": "https://learn.microsoft.com/api/mcp",
-      "enabled": false
-    },
-    "chrome-devtools": {
-      "type": "local",
-      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
-      "enabled": false
+      "context7": {
+        "type": "local",
+        "command": ["npx", "-y", "@upstash/context7-mcp"],
+        "environment": {
+          "CTX7_API_KEY": "{env:CONTEXT7_API_KEY}"
+        },
+        "disabled": false
+      },
+      "microsoft-learn": {
+        "type": "remote",
+        "url": "https://learn.microsoft.com/api/mcp",
+        "disabled": true
+      },
+      "chrome-devtools": {
+        "type": "local",
+        "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+        "disabled": true
+      }
     }
   },
-  "plugin": [
-    "@tarquinen/opencode-dcp@3.1.15",
-    "vim@0.1.0"
+  "plugins": [
+    "@tarquinen/opencode-dcp@3.2.0"
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "executor": "openai-codex/gpt-6-luna",
+  "executor": "openai-codex/gpt-5.6-luna",
   "advisor": "openai-codex/gpt-6-astra",
   "executorEffort": "max",
   "advisorEffort": "medium",

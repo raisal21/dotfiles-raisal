@@ -1,33 +1,36 @@
 {
   "$schema": "https://opencode.ai/config.json",
   "default_agent": "learn",
-  "agent": {
+  "agents": {
     "learn": {
       "mode": "primary",
-      "temperature": 0.3,
-      "permission": {
-        "edit": "deny",
-        "bash": {
-          "*": "deny",
-          "dotnet build": "allow",
-          "dotnet run": "allow",
-          "dotnet test": "allow"
-        },
-        "task": {
-          "*": "deny",
-          "brutally-honest": "allow"
+      "request": {
+        "body": {
+          "temperature": 0.3
         }
-      }
+      },
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "shell", "resource": "*", "effect": "deny" },
+        { "action": "shell", "resource": "dotnet build", "effect": "allow" },
+        { "action": "shell", "resource": "dotnet run", "effect": "allow" },
+        { "action": "shell", "resource": "dotnet test", "effect": "allow" },
+        { "action": "subagent", "resource": "*", "effect": "deny" },
+        { "action": "subagent", "resource": "brutally-honest", "effect": "allow" }
+      ]
     },
     "brutally-honest": {
       "mode": "subagent",
       "hidden": true,
-      "temperature": 0.1,
-      "permission": {
-        "edit": "deny",
-        "write": "deny",
-        "bash": "deny"
-      }
+      "request": {
+        "body": {
+          "temperature": 0.1
+        }
+      },
+      "permissions": [
+        { "action": "edit", "resource": "*", "effect": "deny" },
+        { "action": "shell", "resource": "*", "effect": "deny" }
+      ]
     }
   }
 }

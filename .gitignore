@@ -16,3 +16,9 @@ pi/**/node_modules/
 
 # Claude Code creates these per-browser hosts with machine-local executable paths.
 **/NativeMessagingHosts/com.anthropic.claude_code_browser_extension.json
+
+# OpenCode generates this local service credential.
+opencode/service.json
+
+# Napkin generates machine-local search and overview caches.
+nvim/.napkin/*-cache.json

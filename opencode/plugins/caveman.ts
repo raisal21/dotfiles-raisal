@@ -1,4 +1,4 @@
-import type { Plugin } from "@opencode-ai/plugin"
+import { Plugin } from "@opencode/plugin"
 
 const CAVE_LITE = `
 ## Communication: Caveman Lite
@@ -17,10 +17,11 @@ Yes: "The bug is in the auth middleware. The token expiry check uses \`<\` inste
 Drop caveman for: security warnings, irreversible action confirmations, multi-step sequences where brevity risks misread, user asks to clarify.
 `.trim()
 
-export const CavemanMode: Plugin = async () => {
-  return {
-    "experimental.chat.system.transform": async (_input, output) => {
-      output.system.push(CAVE_LITE)
-    },
-  }
-}
+export default Plugin.define({
+  id: "raisal.caveman",
+  async setup(ctx) {
+    await ctx.session.hook("context", (event) => {
+      event.system.push({ type: "text", text: CAVE_LITE })
+    })
+  },
+})
