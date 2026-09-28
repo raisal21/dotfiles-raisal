@@ -496,6 +496,39 @@ export default function (pi: ExtensionAPI) {
     },
   })
 
+  pi.registerTool({
+    name: "bank_inventory_form",
+    label: "Bank inventory form",
+    description:
+      "Assemble an EPPS or PAPI form (full: EPPS 225 with 15 repeats, PAPI 90; short: 30 pairs) from reviewed statements, and run the form verifier. `preview` also uses draft statements and marks the form as a preview. Without write it only reports; with write=true it saves the form under preference-bank/<inventory>/forms/.",
+    parameters: Type.Object({
+      inventory: INVENTORY,
+      short: Type.Optional(Type.Boolean({ description: "Short practice form (about 30 pairs)" })),
+      preview: Type.Optional(Type.Boolean({ description: "Allow draft statements; the form is marked preview" })),
+      seed: Type.Optional(Type.Integer({ minimum: 0 })),
+      write: Type.Optional(Type.Boolean()),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      const args = ["inventory", "form", params.inventory]
+      if (params.short) args.push("--pendek")
+      if (params.preview) args.push("--pratinjau")
+      if (params.seed !== undefined) args.push("--seed", String(params.seed))
+      if (params.write) args.push("--write")
+      return runBank(ctx, args, signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_inventory_check",
+    label: "Bank inventory check",
+    description:
+      "Verify saved EPPS and PAPI forms against the current pool: scale counts, Need/Role rule, desirability gaps, repeats identical to their originals, statement status, no scale in consecutive pairs, and a rebuild from the seed.",
+    parameters: Type.Object({ forms: Type.Optional(Type.Array(Type.String(), { description: "Form IDs (default: all)" })) }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      return runBank(ctx, ["inventory", "check", ...(params.forms ?? [])], signal)
+    },
+  })
+
   pi.on("tool_call", async (event, ctx) => {
     const repo = repoFor(ctx.cwd)
     if (!repo) return undefined
