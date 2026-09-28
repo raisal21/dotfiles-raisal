@@ -80,3 +80,13 @@ test("agents cannot mark pool entries reviewed", () => {
   assert.equal(checkFileWrite(repo, "/r", `${bank}/pools/kategori.yaml`, "- code: buah\n  status: reviewed\n").action, "block")
   assert.equal(checkFileWrite(repo, "/r", `${bank}/pools/kategori.yaml`, "- code: buah\n  status: draft\n").action, "allow")
 })
+
+test("preference statements and forms are written only through bank tools", () => {
+  const pref = `${repo.psychometric}/preference-bank`
+  assert.equal(checkFileWrite(repo, "/r", `${pref}/epps/statements.yaml`, "status: draft\n").action, "block")
+  assert.equal(checkFileWrite(repo, "/r", `${pref}/papi/forms/PAPI-P01.yaml`, "").action, "block")
+  assert.equal(checkFileWrite(repo, "/r", `${pref}/epps/rules.md`, "# rules").action, "allow")
+  assert.equal(checkFileWrite(repo, "/r", `${pref}/swe-reference.md`, "# ref").action, "allow")
+  assert.equal(checkBash(`sed -i 's/draft/reviewed/' ${pref}/epps/statements.yaml`).action, "block")
+  assert.equal(checkBash(`uv run bank inventory add epps --scale ach --text x --rater m --value 3 --origin o`).action, "allow")
+})

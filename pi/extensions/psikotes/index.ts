@@ -137,10 +137,20 @@ export default function (pi: ExtensionAPI) {
   })
 
   pi.registerCommand("review-soal", {
-    description: "Tinjau soal checked di browser: /review-soal [subtes ...], atau /review-soal pool untuk pool leksikal",
+    description:
+      "Tinjau soal checked di browser: /review-soal [subtes ...], /review-soal pool untuk pool leksikal, atau /review-soal pernyataan <epps|papi>",
     handler: async (raw, ctx) => {
       const subtests = raw.trim().split(/\s+/).filter(Boolean)
-      const args = subtests.length === 1 && subtests[0] === "pool" ? ["review", "--pool"] : ["review", ...subtests]
+      let args = ["review", ...subtests]
+      if (subtests.length === 1 && subtests[0] === "pool") args = ["review", "--pool"]
+      if (subtests[0] === "pernyataan") {
+        const inventory = subtests[1]
+        if (inventory !== "epps" && inventory !== "papi") {
+          ctx.ui.notify("Pakai: /review-soal pernyataan <epps|papi>", "warning")
+          return
+        }
+        args = ["inventory", "review", inventory]
+      }
       void launch(ctx, "review", args, async (finished) => {
         const decisions = (finished?.decisions as { id?: string; entry?: string; status: string }[] | undefined) ?? []
         ctx.ui.notify(
@@ -406,6 +416,83 @@ export default function (pi: ExtensionAPI) {
     parameters: Type.Object({}),
     async execute(_id, _params, signal, _onUpdate, ctx) {
       return runBank(ctx, ["views"], signal)
+    },
+  })
+
+  const INVENTORY = Type.Union([Type.Literal("epps"), Type.Literal("papi")])
+
+  pi.registerTool({
+    name: "bank_inventory_pool",
+    label: "Bank inventory pool",
+    description:
+      "EPPS and PAPI statement pools: per-scale counts of draft, reviewed, and rejected statements, blind ratings, mean social desirability, and how many are missing to reach 8 per scale. Only the user marks statements reviewed.",
+    parameters: Type.Object({ inventory: Type.Optional(INVENTORY) }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      return runBank(ctx, ["inventory", "pool", ...(params.inventory ? [params.inventory] : [])], signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_inventory_lint",
+    label: "Bank inventory lint",
+    description: "Program-checkable writing rules for EPPS and PAPI statements (first person, length, double negation, loaded words, near duplicates, writer and blind ratings far apart).",
+    parameters: Type.Object({ inventory: Type.Optional(INVENTORY) }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      return runBank(ctx, ["inventory", "lint", ...(params.inventory ? [params.inventory] : [])], signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_inventory_add",
+    label: "Bank inventory add",
+    description:
+      "Add one draft EPPS or PAPI statement with the writer's social-desirability rating (1 to 5). The statement is linted first and rejected with the reasons if it breaks a rule. Never hand-edit statements.yaml.",
+    parameters: Type.Object({
+      inventory: INVENTORY,
+      scale: Type.String({ description: "Scale code from the taxonomy, e.g. ach or W" }),
+      text: Type.String({ description: "First-person Indonesian work statement starting with `Saya`" }),
+      rater: Type.String({ description: "Model that wrote the statement" }),
+      value: Type.Integer({ minimum: 1, maximum: 5 }),
+      origin: Type.String({ description: "e.g. agent:<model> workflow psikotes-pernyataan" }),
+      note: Type.Optional(Type.String()),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      const args = ["inventory", "add", params.inventory, "--scale", params.scale, "--text", params.text, "--rater", params.rater, "--value", String(params.value), "--origin", params.origin]
+      if (params.note) args.push("--note", params.note)
+      return runBank(ctx, args, signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_inventory_blind_prompt",
+    label: "Bank inventory blind prompt",
+    description:
+      "Statements for a blind social-desirability rater: opaque keys and texts only, never IDs or scales, limited to statements this rater has not rated blind yet.",
+    parameters: Type.Object({
+      inventory: INVENTORY,
+      rater: Type.String({ description: "The blind rater's model" }),
+      limit: Type.Optional(Type.Integer({ minimum: 1, maximum: 80 })),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      return runBank(ctx, ["inventory", "blind-prompt", params.inventory, "--rater", params.rater, "--limit", String(params.limit ?? 40)], signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_inventory_rate",
+    label: "Bank inventory rate",
+    description:
+      "Record one social-desirability rating (1 to 5) for a statement, by blind key or ID. Blind raters use the key from bank_inventory_blind_prompt with blind=true; record only the value the rater gave.",
+    parameters: Type.Object({
+      statement: Type.String({ description: "Blind key or statement ID" }),
+      rater: Type.String(),
+      value: Type.Integer({ minimum: 1, maximum: 5 }),
+      blind: Type.Optional(Type.Boolean()),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      const args = ["inventory", "rate", params.statement, "--rater", params.rater, "--value", String(params.value)]
+      if (params.blind) args.push("--blind")
+      return runBank(ctx, args, signal)
     },
   })
 
