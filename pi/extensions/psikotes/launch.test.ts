@@ -5,7 +5,7 @@ import { cpSync, mkdtempSync, rmSync } from "node:fs"
 import { tmpdir } from "node:os"
 import { join } from "node:path"
 import { test } from "node:test"
-import { parseSessionArgs, startServer } from "./launch.ts"
+import { parseInventoryArgs, parseSessionArgs, startServer } from "./launch.ts"
 
 const REPO = process.env.PSIKOTES_REPO ?? `${process.env.HOME}/workspace/job-hunting`
 const PSY = join(REPO, "documents/research/psychometric-tests")
@@ -41,4 +41,11 @@ test("startServer reports ready and finished events", { timeout: 60_000 }, async
     delete process.env.PSIKOTES_ROOT
     rmSync(root, { recursive: true, force: true })
   }
+})
+
+test("parseInventoryArgs builds the inventory session command", () => {
+  assert.deepEqual(parseInventoryArgs("epps").args, ["inventory", "session", "epps"])
+  assert.deepEqual(parseInventoryArgs("papi pendek --pratinjau").args, ["inventory", "session", "papi", "--pendek", "--pratinjau"])
+  assert.ok(parseInventoryArgs("").error)
+  assert.ok(parseInventoryArgs("epps 30").error)
 })

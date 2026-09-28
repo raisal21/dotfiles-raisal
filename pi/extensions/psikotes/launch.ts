@@ -96,3 +96,16 @@ export function parseSessionArgs(raw: string): { args: string[]; error?: string 
   if (rest.includes("--draft")) args.push("--draft")
   return { args }
 }
+
+export const INVENTORY_USAGE = "Pakai: /inventori <epps|papi> [pendek] [--pratinjau]"
+
+export function parseInventoryArgs(raw: string): { args: string[]; error?: string } {
+  const tokens = raw.trim().toLowerCase().split(/\s+/).filter(Boolean)
+  const inventory = tokens.find((token) => token === "epps" || token === "papi")
+  const known = new Set(["epps", "papi", "pendek", "--pendek", "pratinjau", "--pratinjau"])
+  if (!inventory || tokens.some((token) => !known.has(token))) return { args: [], error: INVENTORY_USAGE }
+  const args = ["inventory", "session", inventory]
+  if (tokens.includes("pendek") || tokens.includes("--pendek")) args.push("--pendek")
+  if (tokens.includes("pratinjau") || tokens.includes("--pratinjau")) args.push("--pratinjau")
+  return { args }
+}

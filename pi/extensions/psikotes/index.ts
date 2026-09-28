@@ -12,7 +12,16 @@ import {
 } from "@earendil-works/pi-coding-agent"
 import { Type } from "typebox"
 import { checkBash, checkFileWrite, findRepo, type Decision, type Repo } from "./guards.ts"
-import { openBrowser, parseSessionArgs, SESSION_USAGE, startServer, type LaunchConfig, type Server } from "./launch.ts"
+import {
+  INVENTORY_USAGE,
+  openBrowser,
+  parseInventoryArgs,
+  parseSessionArgs,
+  SESSION_USAGE,
+  startServer,
+  type LaunchConfig,
+  type Server,
+} from "./launch.ts"
 
 type Config = {
   toolsDir: string
@@ -80,7 +89,7 @@ export default function (pi: ExtensionAPI) {
 
   async function launch(
     ctx: ExtensionCommandContext,
-    kind: "latihan" | "review",
+    kind: "latihan" | "inventori" | "review",
     args: string[],
     after: (finished: Record<string, unknown> | undefined) => Promise<void>,
   ) {
@@ -93,11 +102,11 @@ export default function (pi: ExtensionAPI) {
       ctx.ui.notify(`Masih ada ${active.kind} yang berjalan. Tutup dulu dari browser.`, "warning")
       return
     }
-    const browser = kind === "latihan" ? config.browser.session : config.browser.review
+    const browser = kind === "review" ? config.browser.review : config.browser.session
     const server = startServer(repo.tools, repo.root, args, (ready) => {
       void openBrowser(String(ready.url), browser).then((where) => {
         ctx.ui.setStatus("psikotes", `${kind} berjalan`)
-        ctx.ui.notify(`${kind === "latihan" ? "Sesi" : "Halaman review"} dibuka di ${where}: ${ready.url}`, "info")
+        ctx.ui.notify(`${kind === "review" ? "Halaman review" : "Sesi"} dibuka di ${where}: ${ready.url}`, "info")
       })
     })
     active = { kind, server }
@@ -131,6 +140,34 @@ export default function (pi: ExtensionAPI) {
         ctx.ui.notify(line, "info")
         if (ctx.hasUI && (await ctx.ui.confirm("Debrief sekarang?", line))) {
           pi.sendUserMessage(`/debrief ${finished.id}`, { expandPromptTemplates: true })
+        }
+      })
+    },
+  })
+
+  pi.registerCommand("inventori", {
+    description: `Sesi inventori preferensi di browser. ${INVENTORY_USAGE}`,
+    handler: async (raw, ctx) => {
+      const { args, error } = parseInventoryArgs(raw)
+      if (error) {
+        ctx.ui.notify(error, "warning")
+        return
+      }
+      void launch(ctx, "inventori", args, async (finished) => {
+        if (!finished || finished.event === "discarded") {
+          ctx.ui.notify(finished?.kept ? "Sesi ditutup sebelum selesai; jawaban disimpan sebagai ditinggalkan." : "Sesi ditutup sebelum dimulai; tidak ada yang disimpan.", "info")
+          return
+        }
+        const consistency = finished.consistency as { same: number; of: number } | null
+        const tempo = finished.tempo as { median_sec: number | null }
+        const line =
+          `${finished.inventory_name} ${finished.kind_name}: ${finished.answered} pasangan` +
+          (consistency ? `, konsistensi ${consistency.same} dari ${consistency.of}` : "") +
+          (tempo.median_sec !== null ? `, tempo median ${tempo.median_sec} dtk` : "") +
+          "."
+        ctx.ui.notify(line, "info")
+        if (ctx.hasUI && (await ctx.ui.confirm("Debrief preferensi sekarang?", line))) {
+          pi.sendUserMessage(`/debrief-preferensi ${finished.id}`, { expandPromptTemplates: true })
         }
       })
     },
@@ -526,6 +563,24 @@ export default function (pi: ExtensionAPI) {
     parameters: Type.Object({ forms: Type.Optional(Type.Array(Type.String(), { description: "Form IDs (default: all)" })) }),
     async execute(_id, params, signal, _onUpdate, ctx) {
       return runBank(ctx, ["inventory", "check", ...(params.forms ?? [])], signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_inventory_result",
+    label: "Bank inventory result",
+    description:
+      "EPPS or PAPI results. With a session (default latest): raw score per scale, level inside the own profile, EPPS consistency, and tempo for that session. With overview=true: the Preferensi recap across sessions (latest profiles, consistency history, stability, EPPS-PAPI cross-map with misaligned pairs, tempo). Raw ipsative scores only; never quote percentiles or norms. Short practice sessions also carry the scale of each statement when reveal=true.",
+    parameters: Type.Object({
+      session: Type.Optional(Type.String({ description: "Inventory session ID or latest" })),
+      overview: Type.Optional(Type.Boolean()),
+      reveal: Type.Optional(Type.Boolean({ description: "Short practice only: include each pair's scales" })),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      if (params.overview) return runBank(ctx, ["inventory", "profile"], signal)
+      const args = ["inventory", "result", params.session ?? "latest"]
+      if (params.reveal) args.push("--reveal")
+      return runBank(ctx, args, signal)
     },
   })
 
