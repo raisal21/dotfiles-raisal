@@ -264,7 +264,7 @@ export default function (pi: ExtensionAPI) {
     name: "bank_report",
     label: "Bank report",
     description:
-      "Coverage of the psychometric question bank: items per mechanism × level against the target, and status counts. Use before creating items to pick under-filled cells.",
+      "Coverage of the psychometric question bank: items per mechanism × level against the target, prioritised `targets` (drafts first, with how each cell is filled), the review queue, lint counts per subtest, and sessions. Use before creating items and pick cells from `targets`.",
     parameters: Type.Object({
       subtest: Type.Optional(Type.String({ description: "Subtest code or prefix, e.g. zr or ist-se" })),
     }),
@@ -392,7 +392,7 @@ export default function (pi: ExtensionAPI) {
   pi.registerTool({
     name: "bank_lint",
     label: "Bank lint",
-    description: "Structural lint for every item. Run after writing or changing items; fix all errors.",
+    description: "Structural and content lint for every item (item-writing clues, key positions, duplicates, pool hygiene). Run after writing or changing items; fix every error and the warnings on items you touched.",
     parameters: Type.Object({}),
     async execute(_id, _params, signal, _onUpdate, ctx) {
       return runBank(ctx, ["lint"], signal)
