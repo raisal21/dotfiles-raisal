@@ -584,6 +584,23 @@ export default function (pi: ExtensionAPI) {
     },
   })
 
+  pi.registerTool({
+    name: "bank_inventory_debrief",
+    label: "Bank inventory debrief",
+    description:
+      "Interview worksheet from the latest full EPPS and PAPI sessions (or a named full session): scales at the extremes of the own profile, EPPS-PAPI pairs that disagree, and scales that shift between sessions, each with the atlas interview probe, the SWE situations from preference-bank/swe-reference.md, and the fact-ledger IDs behind them with their ledger status. Unknown or unsupported evidence is marked needs-confirmation. write=true also saves a private copy under sessions/inventori/ (gitignored).",
+    parameters: Type.Object({
+      session: Type.Optional(Type.String({ description: "Full inventory session ID (default: latest full EPPS and PAPI)" })),
+      write: Type.Optional(Type.Boolean()),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      const args = ["inventory", "debrief"]
+      if (params.session) args.push(params.session)
+      if (params.write) args.push("--write")
+      return runBank(ctx, args, signal)
+    },
+  })
+
   pi.on("tool_call", async (event, ctx) => {
     const repo = repoFor(ctx.cwd)
     if (!repo) return undefined
