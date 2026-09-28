@@ -55,6 +55,9 @@ export function checkFileWrite(repo: Repo, cwd: string, path: string, newText: s
   if (/^[a-z]+-question-bank\/[^/]+\/items\.md$/.test(rel)) {
     return { action: "block", reason: "items.md dibangkitkan dari YAML. Ubah items/*.yaml, lalu jalankan bank_views." }
   }
+  if (/^[a-z]+-question-bank\/pools\//.test(rel) && /status:\s*reviewed/.test(newText)) {
+    return { action: "block", reason: "Entri pool hanya direview user. Agent menulis entri baru sebagai draft." }
+  }
   if (/^[a-z]+-question-bank\/[^/]+\/figures\//.test(rel)) {
     return { action: "block", reason: "Gambar dibangkitkan dari spec. Ubah lewat bank_generate, lalu bank_render; jangan edit SVG atau PNG." }
   }
@@ -73,7 +76,7 @@ export function checkFileWrite(repo: Repo, cwd: string, path: string, newText: s
 }
 
 const PROTECTED_IN_BASH =
-  /(question-bank\/[^\s'"]*(items|figures)[/.\s'"]|(^|[\s'"/])items\/[A-Z]{2}-\d{3}\.yaml|id-tombstones\.yaml|question-tools\/taxonomy\/|psychometric-tests\/sessions\/)/
+  /(question-bank\/[^\s'"]*(items|figures|pools)[/.\s'"]|(^|[\s'"/])items\/[A-Z]{2}-\d{3}\.yaml|id-tombstones\.yaml|question-tools\/taxonomy\/|psychometric-tests\/sessions\/)/
 const WRITES_IN_BASH =
   /(^|[\s;&|(])(sed\s+(-[a-zA-Z]*\s+)*-i|perl\s+-[a-zA-Z]*i|tee|mv|cp|rm|truncate|dd|install|touch|python3?|node|ruby|yq\s+-i)\b|(^|[^\d&=<>-])>{1,2}(?!&)/
 const BANK_CLI = /^\s*(rtk\s+(proxy\s+)?)?uv\s+run\b[^;&|]*\bbank\b[^;&|>]*$/

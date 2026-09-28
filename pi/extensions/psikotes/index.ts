@@ -137,13 +137,14 @@ export default function (pi: ExtensionAPI) {
   })
 
   pi.registerCommand("review-soal", {
-    description: "Tinjau soal checked di browser: /review-soal [subtes ...]",
+    description: "Tinjau soal checked di browser: /review-soal [subtes ...], atau /review-soal pool untuk pool leksikal",
     handler: async (raw, ctx) => {
       const subtests = raw.trim().split(/\s+/).filter(Boolean)
-      void launch(ctx, "review", ["review", ...subtests], async (finished) => {
-        const decisions = (finished?.decisions as { id: string; status: string }[] | undefined) ?? []
+      const args = subtests.length === 1 && subtests[0] === "pool" ? ["review", "--pool"] : ["review", ...subtests]
+      void launch(ctx, "review", args, async (finished) => {
+        const decisions = (finished?.decisions as { id?: string; entry?: string; status: string }[] | undefined) ?? []
         ctx.ui.notify(
-          decisions.length ? `${decisions.length} keputusan: ${decisions.map((d) => `${d.id} ${d.status}`).join(", ")}` : "Tidak ada keputusan.",
+          decisions.length ? `${decisions.length} keputusan: ${decisions.map((d) => `${d.id ?? d.entry} ${d.status}`).join(", ")}` : "Tidak ada keputusan.",
           "info",
         )
       })
@@ -330,6 +331,46 @@ export default function (pi: ExtensionAPI) {
     }),
     async execute(_id, params, signal, _onUpdate, ctx) {
       return runBank(ctx, ["render", ...(params.targets ?? [])], signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_blind_prompt",
+    label: "Bank blind prompt",
+    description:
+      "The question of one item as a blind solver sees it: stem and options only, never the key, explanation, rules, or distractor codes. A blind solver answers from this text alone.",
+    parameters: Type.Object({ item: Type.String({ description: "Item ID, e.g. WA-030" }) }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      return runBank(ctx, ["blind-prompt", params.item], signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_blind_record",
+    label: "Bank blind record",
+    description:
+      "Record one blind solver answer for an item (V1 verbal items and RA). Record exactly what the solver returned; bank_check then decides. Never record an answer you produced after seeing the key.",
+    parameters: Type.Object({
+      item: Type.String({ description: "Item ID" }),
+      solver: Type.String({ description: "Model that solved it, e.g. openai-codex/gpt-6-sol:xhigh" }),
+      answer: Type.String(),
+      alternative: Type.Optional(Type.String({ description: "Second defensible answer the solver named, if any" })),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      const args = ["blind-record", params.item, "--solver", params.solver, "--answer", params.answer]
+      if (params.alternative) args.push("--alternative", params.alternative)
+      return runBank(ctx, args, signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_pool",
+    label: "Bank pool",
+    description:
+      "Lexical pools for WA, AN, GE, ME (categories with words, and word pairs with a relation). `status` counts entries; `seed` adds draft entries taken from existing items. Only the user marks entries reviewed.",
+    parameters: Type.Object({ action: Type.Union([Type.Literal("status"), Type.Literal("seed")]) }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      return runBank(ctx, ["pool", params.action], signal)
     },
   })
 

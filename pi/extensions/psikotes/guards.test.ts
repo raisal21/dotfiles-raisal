@@ -75,3 +75,8 @@ test("every CFIT item comes from a generator", () => {
   const cfit = "/r/documents/research/psychometric-tests/cfit-question-bank"
   assert.equal(checkFileWrite(repo, "/r", `${cfit}/04-conditions/items/CN-001.yaml`, "id: CN-001").action, "block")
 })
+
+test("agents cannot mark pool entries reviewed", () => {
+  assert.equal(checkFileWrite(repo, "/r", `${bank}/pools/kategori.yaml`, "- code: buah\n  status: reviewed\n").action, "block")
+  assert.equal(checkFileWrite(repo, "/r", `${bank}/pools/kategori.yaml`, "- code: buah\n  status: draft\n").action, "allow")
+})
