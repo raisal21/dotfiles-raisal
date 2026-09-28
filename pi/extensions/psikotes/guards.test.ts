@@ -70,3 +70,8 @@ test("figures are rendered, never hand-edited", () => {
   assert.equal(checkBash(`sed -i s/a/b/ ${bank}/08-wu/figures/WU-015.svg`).action, "block")
   assert.equal(checkBash("uv run --project q bank render wu").action, "allow")
 })
+
+test("every CFIT item comes from a generator", () => {
+  const cfit = "/r/documents/research/psychometric-tests/cfit-question-bank"
+  assert.equal(checkFileWrite(repo, "/r", `${cfit}/04-conditions/items/CN-001.yaml`, "id: CN-001").action, "block")
+})

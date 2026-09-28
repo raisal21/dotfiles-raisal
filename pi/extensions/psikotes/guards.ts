@@ -60,7 +60,7 @@ export function checkFileWrite(repo: Repo, cwd: string, path: string, newText: s
   }
   const item = rel.match(/^([a-z]+)-question-bank\/([^/]+)\/items\/[^/]+\.yaml$/)
   if (!item) return ALLOW
-  if (item[1] === "ist" && GENERATOR_ONLY.has(item[2])) {
+  if (item[1] === "cfit" || (item[1] === "ist" && GENERATOR_ONLY.has(item[2]))) {
     return { action: "block", reason: `Soal ${item[2]} hanya dibuat dan diubah lewat bank_generate dan bank_check.` }
   }
   if (STATUS_OR_VERIFICATION.test(newText)) {

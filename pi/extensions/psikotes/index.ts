@@ -298,7 +298,7 @@ export default function (pi: ExtensionAPI) {
     name: "bank_generate",
     label: "Bank generate",
     description:
-      "Generate verified items for a subtest that has a generator (ZR, WU). Without write it only previews. With write=true items are saved, verified, marked checked, figures are rendered (WU), and items.md is regenerated. ZR needs a mechanism. WU without a mechanism builds an exam-like mix; each WU call makes a new set of five reference cubes unless `set` names an existing one.",
+      "Generate verified items for a subtest that has a generator (IST ZR, FA, WU; CFIT CN). Without write it only previews. With write=true items are saved, verified, marked checked, figures are rendered, and items.md is regenerated. ZR needs a mechanism; FA, WU, and CN without one build a mix for the level. The CLI picks the IST or CFIT bank from the subtest. WU without a mechanism builds an exam-like mix; each WU call makes a new set of five reference cubes unless `set` names an existing one.",
     parameters: Type.Object({
       subtest: Type.String({ description: "Subtest code or prefix, e.g. zr or wu" }),
       mechanism: Type.Optional(Type.String({ description: "Mechanism code from bank_taxonomy (required for ZR)" })),
