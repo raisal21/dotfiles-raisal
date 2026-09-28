@@ -298,22 +298,38 @@ export default function (pi: ExtensionAPI) {
     name: "bank_generate",
     label: "Bank generate",
     description:
-      "Generate verified items for a subtest that has a generator (currently ZR). Without write it only previews. With write=true items are saved, verified, marked checked, and items.md is regenerated.",
+      "Generate verified items for a subtest that has a generator (ZR, WU). Without write it only previews. With write=true items are saved, verified, marked checked, figures are rendered (WU), and items.md is regenerated. ZR needs a mechanism. WU without a mechanism builds an exam-like mix; each WU call makes a new set of five reference cubes unless `set` names an existing one.",
     parameters: Type.Object({
-      subtest: Type.String({ description: "Subtest code or prefix, e.g. zr" }),
-      mechanism: Type.String({ description: "Mechanism code from bank_taxonomy" }),
+      subtest: Type.String({ description: "Subtest code or prefix, e.g. zr or wu" }),
+      mechanism: Type.Optional(Type.String({ description: "Mechanism code from bank_taxonomy (required for ZR)" })),
       level: Type.Optional(Type.Integer({ minimum: 1, maximum: 3 })),
       n: Type.Optional(Type.Integer({ minimum: 1, maximum: 50, description: "Number of items (default 1)" })),
       seed: Type.Optional(Type.Integer({ minimum: 0 })),
+      set: Type.Optional(Type.String({ description: "WU only: add to an existing set, e.g. WU-S01" })),
       write: Type.Optional(Type.Boolean({ description: "Save and verify the items (default false)" })),
     }),
     async execute(_id, params, signal, _onUpdate, ctx) {
-      const args = ["generate", params.subtest, "--mechanism", params.mechanism]
+      const args = ["generate", params.subtest]
+      if (params.mechanism) args.push("--mechanism", params.mechanism)
       if (params.level !== undefined) args.push("--level", String(params.level))
       if (params.n !== undefined) args.push("--n", String(params.n))
       if (params.seed !== undefined) args.push("--seed", String(params.seed))
+      if (params.set) args.push("--set", params.set)
       if (params.write) args.push("--write")
       return runBank(ctx, args, signal)
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_render",
+    label: "Bank render",
+    description:
+      "Re-render the SVG and PNG figures of figural items (WU) from their spec. Use after changing a spec, or to get a PNG to look at; never edit figures by hand.",
+    parameters: Type.Object({
+      targets: Type.Optional(Type.Array(Type.String(), { description: "Item IDs or subtest codes (default: all figural subtests)" })),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      return runBank(ctx, ["render", ...(params.targets ?? [])], signal)
     },
   })
 

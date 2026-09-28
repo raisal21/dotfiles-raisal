@@ -64,3 +64,9 @@ test("shell writes to bank files are blocked, reads and the bank CLI are allowed
   ]
   for (const command of allowed) assert.equal(checkBash(command).action, "allow", command)
 })
+
+test("figures are rendered, never hand-edited", () => {
+  assert.equal(checkFileWrite(repo, "/r", `${bank}/08-wu/figures/WU-015.svg`, "<svg/>").action, "block")
+  assert.equal(checkBash(`sed -i s/a/b/ ${bank}/08-wu/figures/WU-015.svg`).action, "block")
+  assert.equal(checkBash("uv run --project q bank render wu").action, "allow")
+})
