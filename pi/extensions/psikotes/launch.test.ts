@@ -13,6 +13,13 @@ const PSY = join(REPO, "documents/research/psychometric-tests")
 test("parseSessionArgs builds bank session arguments", () => {
   assert.deepEqual(parseSessionArgs("zr").args, ["session", "zr", "--mode", "ujian"])
   assert.deepEqual(parseSessionArgs("se latihan 10 --draft").args, ["session", "se", "--mode", "latihan", "--n", "10", "--draft"])
+  assert.deepEqual(parseSessionArgs("zr latihan 4 --mekanisme beda-progresif").args, [
+    "session", "zr", "--mode", "latihan", "--n", "4", "--mechanism", "beda-progresif",
+  ])
+  assert.deepEqual(parseSessionArgs("--mekanisme rasio-tetap zr --draft").args, [
+    "session", "zr", "--mode", "ujian", "--mechanism", "rasio-tetap", "--draft",
+  ])
+  assert.ok(parseSessionArgs("zr --mekanisme").error)
   assert.ok(parseSessionArgs("").error)
 })
 

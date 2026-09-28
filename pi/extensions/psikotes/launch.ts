@@ -1,4 +1,4 @@
-// Starting the local `bank session` / `bank review` servers and the browser (plan 6.8, D17).
+// Starting the local `bank session` / `review` / `dashboard` servers and the browser (plan 6.8, D17).
 import { spawn, type ChildProcess } from "node:child_process"
 import { existsSync } from "node:fs"
 import { createInterface } from "node:readline"
@@ -10,6 +10,7 @@ export type BrowserConfig =
 export type LaunchConfig = {
   session: BrowserConfig
   review: BrowserConfig
+  dashboard: BrowserConfig
 }
 
 export type BankEvent = { event: string; [key: string]: unknown }
@@ -78,13 +79,20 @@ export function startServer(
   return { child, done }
 }
 
+export const SESSION_USAGE = "Pakai: /latihan <subtes> [ujian|latihan] [jumlah] [--mekanisme <kode>] [--draft]"
+
 export function parseSessionArgs(raw: string): { args: string[]; error?: string } {
   const tokens = raw.trim().split(/\s+/).filter(Boolean)
-  const subtest = tokens.find((token) => !token.startsWith("--") && !/^\d+$/.test(token) && token !== "ujian" && token !== "latihan")
-  if (!subtest) return { args: [], error: "Pakai: /latihan <subtes> [ujian|latihan] [jumlah] [--draft]" }
-  const args = ["session", subtest, "--mode", tokens.includes("latihan") ? "latihan" : "ujian"]
-  const count = tokens.find((token) => /^\d+$/.test(token))
+  const flag = tokens.findIndex((token) => token === "--mekanisme" || token === "--mechanism")
+  const mechanism = flag >= 0 ? tokens[flag + 1] : undefined
+  if (flag >= 0 && (!mechanism || mechanism.startsWith("--"))) return { args: [], error: SESSION_USAGE }
+  const rest = flag >= 0 ? tokens.filter((_, index) => index !== flag && index !== flag + 1) : tokens
+  const subtest = rest.find((token) => !token.startsWith("--") && !/^\d+$/.test(token) && token !== "ujian" && token !== "latihan")
+  if (!subtest) return { args: [], error: SESSION_USAGE }
+  const args = ["session", subtest, "--mode", rest.includes("latihan") ? "latihan" : "ujian"]
+  const count = rest.find((token) => /^\d+$/.test(token))
   if (count) args.push("--n", count)
-  if (tokens.includes("--draft")) args.push("--draft")
+  if (mechanism) args.push("--mechanism", mechanism)
+  if (rest.includes("--draft")) args.push("--draft")
   return { args }
 }

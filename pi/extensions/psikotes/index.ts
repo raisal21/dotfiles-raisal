@@ -12,7 +12,7 @@ import {
 } from "@earendil-works/pi-coding-agent"
 import { Type } from "typebox"
 import { checkBash, checkFileWrite, findRepo, type Decision, type Repo } from "./guards.ts"
-import { openBrowser, parseSessionArgs, startServer, type LaunchConfig, type Server } from "./launch.ts"
+import { openBrowser, parseSessionArgs, SESSION_USAGE, startServer, type LaunchConfig, type Server } from "./launch.ts"
 
 type Config = {
   toolsDir: string
@@ -29,6 +29,7 @@ const DEFAULT_CONFIG: Config = {
       windowSize: "1100,860",
     },
     review: { type: "default" },
+    dashboard: { type: "default" },
   },
 }
 const MAX_OUTPUT = 40_000
@@ -64,7 +65,18 @@ export default function (pi: ExtensionAPI) {
     active = undefined
   }
 
-  pi.on("session_shutdown", () => stopActive())
+  // The dashboard is separate: it may stay open next to a session, and stops itself when idle.
+  let dashboard: { server: Server; url?: string } | undefined
+
+  function stopDashboard() {
+    if (dashboard && dashboard.server.child.exitCode === null) dashboard.server.child.kill("SIGINT")
+    dashboard = undefined
+  }
+
+  pi.on("session_shutdown", () => {
+    stopActive()
+    stopDashboard()
+  })
 
   async function launch(
     ctx: ExtensionCommandContext,
@@ -100,7 +112,7 @@ export default function (pi: ExtensionAPI) {
   }
 
   pi.registerCommand("latihan", {
-    description: "Sesi latihan psikotes di browser: /latihan <subtes> [ujian|latihan] [jumlah] [--draft]",
+    description: `Sesi latihan psikotes di browser. ${SESSION_USAGE}`,
     handler: async (raw, ctx) => {
       const { args, error } = parseSessionArgs(raw)
       if (error) {
@@ -135,6 +147,59 @@ export default function (pi: ExtensionAPI) {
           "info",
         )
       })
+    },
+  })
+
+  pi.registerCommand("dashboard", {
+    description: "Rekap kemajuan psikotes di browser: /dashboard [stop]",
+    handler: async (raw, ctx) => {
+      if (raw.trim() === "stop") {
+        ctx.ui.notify(dashboard ? "Dashboard dihentikan." : "Dashboard tidak sedang berjalan.", "info")
+        stopDashboard()
+        return
+      }
+      const repo = repoFor(ctx.cwd)
+      if (!repo) {
+        ctx.ui.notify(`Perintah ini hanya bekerja di repo yang punya ${config.toolsDir}.`, "warning")
+        return
+      }
+      if (dashboard?.url) {
+        const where = await openBrowser(dashboard.url, config.browser.dashboard)
+        ctx.ui.notify(`Dashboard sudah berjalan; dibuka lagi di ${where}: ${dashboard.url}`, "info")
+        return
+      }
+      if (dashboard) return
+      const current: { server: Server; url?: string } = {
+        server: startServer(repo.tools, repo.root, ["dashboard"], (ready) => {
+          current.url = String(ready.url)
+          void openBrowser(current.url, config.browser.dashboard).then((where) =>
+            ctx.ui.notify(`Dashboard dibuka di ${where}: ${current.url}. Hentikan dengan /dashboard stop.`, "info"),
+          )
+        }),
+      }
+      dashboard = current
+      void current.server.done.then((result) => {
+        // After /dashboard stop the slot is already cleared; the exit code then means nothing.
+        if (dashboard !== current) return
+        dashboard = undefined
+        if (result.code !== 0) {
+          ctx.ui.notify(`bank dashboard berhenti dengan kode ${result.code}: ${result.stderr.trim().split("\n").slice(-3).join(" ")}`, "error")
+        }
+      })
+    },
+  })
+
+  pi.registerTool({
+    name: "bank_dashboard_data",
+    label: "Bank dashboard data",
+    description:
+      "Practice recap computed from all sessions: the recommended next practice (with the exact /latihan command), alternatives, restock notes, problem items, and thresholds. Without `subtest` it returns per-subtest status counts only; pass a subtest for per-mechanism accuracy, 95% intervals, mastery checks, session history, and mistake patterns.",
+    parameters: Type.Object({
+      subtest: Type.Optional(Type.String({ description: "Subtest code or prefix for full detail, e.g. zr" })),
+    }),
+    async execute(_id, params, signal, _onUpdate, ctx) {
+      const scope = params.subtest ? ["--subtest", params.subtest] : ["--brief"]
+      return runBank(ctx, ["dashboard", "--data", ...scope], signal)
     },
   })
 
